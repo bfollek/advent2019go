@@ -41,3 +41,14 @@ func TestPart1(t *testing.T) {
 		t.Errorf("Expecting %d, got %d.", expecting, result)
 	}
 }
+
+func TestPart2(t *testing.T) {
+	expecting := 9507
+	result, err := Part2("testdata/day02.dat")
+	if err != nil {
+		t.Errorf("Expecting no error, got %s.", err)
+	}
+	if expecting != result {
+		t.Errorf("Expecting %d, got %d.", expecting, result)
+	}
+}

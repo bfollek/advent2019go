@@ -1,6 +1,7 @@
 package day02
 
 import (
+	"errors"
 	"log"
 
 	"github.com/bfollek/advent2019go/util"
@@ -10,8 +11,9 @@ const add = 1
 const multiply = 2
 const halt = 99
 
-// Part1: "What value is left at position 0 after the program halts?"
+const moonLanding = 19690720
 
+// Part1: "What value is left at position 0 after the program halts?"
 func Part1(fileName string) int {
 	program := loadProgram(fileName)
 	// "...before running the program, replace position 1 with the value 12 and replace
@@ -20,6 +22,33 @@ func Part1(fileName string) int {
 	program[2] = 2
 	program = runProgram(program)
 	return program[0]
+}
+
+// Part2 needs a comment
+func Part2(fileName string) (int, error) {
+	cleanMemory := loadProgram(fileName)
+	for i := 0; i < 99; i++ {
+		for j := 0; j < 99; j++ {
+			program := resetMemory(cleanMemory)
+			program[1] = i
+			program[2] = j
+			program = runProgram(program)
+			if program[0] == moonLanding {
+				return 100*i + j, nil
+			}
+		}
+	}
+	return -1, errors.New("No solution found")
+}
+
+// We can't just assign slice to slice, or we'll get two references to the same slice.
+// So build a new one and copy all values.
+func resetMemory(cleanMemory []int) []int {
+	m := []int{}
+	for _, i := range cleanMemory {
+		m = append(m, i)
+	}
+	return m
 }
 
 func loadProgram(fileName string) []int {
