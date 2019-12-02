@@ -5,7 +5,6 @@ import "testing"
 import "reflect"
 
 func TestRunProgram(t *testing.T) {
-	//1,0,0,0,99 becomes 2,0,0,0,99 (1 + 1 = 2).
 	type runProgramTest struct {
 		program   []int
 		expecting []int
