@@ -18,7 +18,7 @@ func Part2(fileName string) int {
 	sum := 0
 	masses := loadMasses(fileName)
 	for _, mass := range masses {
-		sum += fuelRequiredMeta(mass, 0)
+		sum += fuelRequiredMeta(mass)
 	}
 	return sum
 }
@@ -32,12 +32,12 @@ func fuelRequired(mass int) int {
 // "So, for each module mass, calculate its fuel and add it to the total. Then,
 // treat the fuel amount you just calculated as the input mass and repeat the
 // process, continuing until a fuel requirement is zero or negative."
-func fuelRequiredMeta(mass, total int) int {
-	f := fuelRequired(mass)
-	if f < 1 {
-		return total
+func fuelRequiredMeta(mass int) int {
+	total := fuelRequired(mass)
+	for f := fuelRequired(total); f >= 1; f = fuelRequired(f) {
+		total += f
 	}
-	return fuelRequiredMeta(f, total+f)
+	return total
 }
 
 func loadMasses(fileName string) []int {

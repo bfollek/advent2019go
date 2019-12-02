@@ -54,7 +54,7 @@ func TestFuelRequiredMeta(t *testing.T) {
 		},
 	}
 	for _, tst := range fuelRequiredMetaTests {
-		if result := fuelRequiredMeta(tst.mass, 0); tst.expecting != result {
+		if result := fuelRequiredMeta(tst.mass); tst.expecting != result {
 			t.Errorf("fuelRequiredMeta: expecting [%v], got [%v]", tst.expecting, result)
 		}
 	}
