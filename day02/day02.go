@@ -13,7 +13,7 @@ const halt = 99
 
 const moonLanding = 19690720
 
-// Part1: "What value is left at position 0 after the program halts?"
+// Part1 "What value is left at position 0 after the program halts?"
 func Part1(fileName string) int {
 	program := loadProgram(fileName)
 	// "...before running the program, replace position 1 with the value 12 and replace
@@ -24,7 +24,7 @@ func Part1(fileName string) int {
 	return program[0]
 }
 
-// Part2 needs a comment
+// Part2 "...you need to determine what pair of inputs produces the output 19690720."
 func Part2(fileName string) (int, error) {
 	cleanMemory := loadProgram(fileName)
 	for i := 0; i < 99; i++ {
@@ -41,8 +41,14 @@ func Part2(fileName string) (int, error) {
 	return -1, errors.New("No solution found")
 }
 
-// We can't just assign slice to slice, or we'll get two references to the same slice.
-// So build a new one and copy all values.
+/*
+ * "Each time you try a pair of inputs, make sure you first reset the computer's
+ * memory to the values in the program (your puzzle input) - in other words, don't
+ * reuse memory from a previous attempt."
+ *
+ * We can't just assign slice to slice, or we'll get two references to the same slice
+ * and we'll overwrite our clean memory. So we build a new slice and copy all values.
+ */
 func resetMemory(cleanMemory []int) []int {
 	m := []int{}
 	for _, i := range cleanMemory {
