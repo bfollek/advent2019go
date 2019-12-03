@@ -4,7 +4,7 @@ import "testing"
 
 import "reflect"
 
-func TestRunProgram(t *testing.T) {
+func TestDay2RunProgram(t *testing.T) {
 	type runProgramTest struct {
 		program   []int
 		expecting []int
@@ -33,7 +33,7 @@ func TestRunProgram(t *testing.T) {
 		}
 	}
 }
-func TestPart1(t *testing.T) {
+func TestDay2Part1(t *testing.T) {
 	expecting := 2692315
 	result := Part1("testdata/day02.dat")
 	if expecting != result {
@@ -41,7 +41,7 @@ func TestPart1(t *testing.T) {
 	}
 }
 
-func TestPart2(t *testing.T) {
+func TestDay2Part2(t *testing.T) {
 	expecting := 9507
 	result, err := Part2("testdata/day02.dat")
 	if err != nil {

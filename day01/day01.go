@@ -2,23 +2,24 @@ package day01
 
 import "github.com/bfollek/advent2019go/util"
 
+type fuelFunc func(int) int
+
 // Part1 calculates the fuel requirements for all of the modules on my spacecraft.
 func Part1(fileName string) int {
-	sum := 0
-	masses := loadMasses(fileName)
-	for _, mass := range masses {
-		sum += fuelRequired(mass)
-	}
-	return sum
+	return calcFuel(fileName, fuelRequired)
 }
 
 // Part2 calculates the fuel requirements for all of the modules on my spacecraft,
 // plus the fuel costs of the fuel.
 func Part2(fileName string) int {
+	return calcFuel(fileName, fuelRequiredMeta)
+}
+
+func calcFuel(fileName string, f fuelFunc) int {
 	sum := 0
 	masses := loadMasses(fileName)
 	for _, mass := range masses {
-		sum += fuelRequiredMeta(mass)
+		sum += f(mass)
 	}
 	return sum
 }

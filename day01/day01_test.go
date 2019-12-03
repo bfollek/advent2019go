@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func TestFuelRequired(t *testing.T) {
+func TestDay1FuelRequired(t *testing.T) {
 	type fuelRequiredTest struct {
 		mass      int
 		expecting int
@@ -34,7 +34,7 @@ func TestFuelRequired(t *testing.T) {
 	}
 }
 
-func TestFuelRequiredMeta(t *testing.T) {
+func TestDay1FuelRequiredMeta(t *testing.T) {
 	type fuelRequiredMetaTest struct {
 		mass      int
 		expecting int
@@ -60,7 +60,7 @@ func TestFuelRequiredMeta(t *testing.T) {
 	}
 }
 
-func TestPart1(t *testing.T) {
+func TestDay1Part1(t *testing.T) {
 	expecting := 3246455
 	result := Part1("testdata/day01.dat")
 	if expecting != result {
@@ -68,7 +68,7 @@ func TestPart1(t *testing.T) {
 	}
 }
 
-func TestPart2(t *testing.T) {
+func TestDay1Part2(t *testing.T) {
 	expecting := 4866824
 	result := Part2("testdata/day01.dat")
 	if expecting != result {
