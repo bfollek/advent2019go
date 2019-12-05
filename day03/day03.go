@@ -10,6 +10,16 @@ import (
 	mapset "github.com/deckarep/golang-set"
 )
 
+const UP = 'U'
+const DOWN = 'D'
+const RIGHT = 'R'
+const LEFT = 'L'
+
+type move struct {
+	direction byte
+	distance  int
+}
+
 type point struct {
 	x int64
 	y int64
@@ -46,21 +56,20 @@ func getPath(moves []string) mapset.Set {
 	currentX := int64(0)
 	currentY := int64(0)
 	for _, move := range moves {
-		runes := []rune(move)
-		direction := runes[0]
-		distance, err := strconv.Atoi(string(runes[1:]))
+		direction := move[0]
+		distance, err := strconv.Atoi(move[1:])
 		if err != nil {
 			log.Fatal(err)
 		}
 		for ; distance > 0; distance-- {
 			switch direction {
-			case 'U':
+			case UP:
 				currentY++
-			case 'D':
+			case DOWN:
 				currentY--
-			case 'R':
+			case RIGHT:
 				currentX++
-			case 'L':
+			case LEFT:
 				currentX--
 			}
 			p := point{currentX, currentY}
