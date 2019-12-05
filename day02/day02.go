@@ -31,7 +31,7 @@ func Part2(fileName string) (int, error) {
 		for j := 0; j < 99; j++ {
 			// We can't just assign slice to slice, i.e. `program := cleanMemory`,
 			// or we'll get two references to the same slice and overwrite our clean
-			//  memory. So we build a new slice and copy all values.
+			// memory. So we build a new slice and copy all values.
 			program := []int{}
 			program = append(program, cleanMemory...)
 			program[1] = i
