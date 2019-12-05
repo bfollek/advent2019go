@@ -25,6 +25,7 @@ type point struct {
 	y int64
 }
 
+// centralPort is de facto a constant.
 var centralPort = point{0, 0}
 
 // Part1 "What is the Manhattan distance from the central port
