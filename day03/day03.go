@@ -15,6 +15,8 @@ type point struct {
 	y int64
 }
 
+var centralPort = point{0, 0}
+
 // Part1 "What is the Manhattan distance from the central port
 // to the closest intersection?"
 func Part1(fileName string) int64 {
@@ -25,7 +27,7 @@ func Part1(fileName string) int64 {
 
 	closest := int64(math.MaxInt64)
 	for _, p := range crossPoints.ToSlice() {
-		if md := manhattanDistanceFromCentralPort(p.(point)); md < closest {
+		if md := manhattanDistance(p.(point)); md < closest {
 			closest = md
 		}
 	}
@@ -34,9 +36,9 @@ func Part1(fileName string) int64 {
 
 // |x1 - x2| + |y1 - y2|
 // https://xlinux.nist.gov/dads/HTML/manhattanDistance.html
-func manhattanDistanceFromCentralPort(p point) int64 {
-	// The second point is always the central port, {0 0}
-	return util.AbsInt64(p.x-0) + util.AbsInt64(p.y-0)
+func manhattanDistance(p point) int64 {
+	// The second point is always centralPort
+	return util.AbsInt64(p.x-centralPort.x) + util.AbsInt64(p.y-centralPort.y)
 }
 
 func getPath(moves []string) mapset.Set {
