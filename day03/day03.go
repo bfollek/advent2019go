@@ -51,18 +51,13 @@ func manhattanDistance(p point) int64 {
 	return util.AbsInt64(p.x-centralPort.x) + util.AbsInt64(p.y-centralPort.y)
 }
 
-func getPath(moves []string) mapset.Set {
+func getPath(moves []move) mapset.Set {
 	path := mapset.NewSet()
 	currentX := int64(0)
 	currentY := int64(0)
-	for _, move := range moves {
-		direction := move[0]
-		distance, err := strconv.Atoi(move[1:])
-		if err != nil {
-			log.Fatal(err)
-		}
-		for ; distance > 0; distance-- {
-			switch direction {
+	for _, m := range moves {
+		for ; m.distance > 0; m.distance-- {
+			switch m.direction {
 			case UP:
 				currentY++
 			case DOWN:
@@ -79,7 +74,25 @@ func getPath(moves []string) mapset.Set {
 	return path
 }
 
-func loadMoves(fileName string) ([]string, []string) {
+func loadMoves(fileName string) ([]move, []move) {
 	lines := util.MustReadLines(fileName)
-	return strings.Split(lines[0], ","), strings.Split(lines[1], ",")
+	first := lineToMoves(lines[0])
+	second := lineToMoves(lines[1])
+	return first, second
+}
+
+func lineToMoves(line string) []move {
+	moves := []move{}
+	ss := strings.Split(line, ",")
+	for _, s := range ss {
+		m := move{}
+		m.direction = s[0]
+		d, err := strconv.Atoi(s[1:])
+		if err != nil {
+			log.Fatal(err)
+		}
+		m.distance = d
+		moves = append(moves, m)
+	}
+	return moves
 }
