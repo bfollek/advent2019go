@@ -10,10 +10,10 @@ import (
 	mapset "github.com/deckarep/golang-set"
 )
 
-const UP = 'U'
-const DOWN = 'D'
-const RIGHT = 'R'
-const LEFT = 'L'
+const up = 'U'
+const down = 'D'
+const right = 'R'
+const left = 'L'
 
 type move struct {
 	direction byte
@@ -58,13 +58,13 @@ func getPath(moves []move) mapset.Set {
 	for _, m := range moves {
 		for ; m.distance > 0; m.distance-- {
 			switch m.direction {
-			case UP:
+			case up:
 				currentY++
-			case DOWN:
+			case down:
 				currentY--
-			case RIGHT:
+			case right:
 				currentX++
-			case LEFT:
+			case left:
 				currentX--
 			}
 			p := point{currentX, currentY}
