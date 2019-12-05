@@ -44,13 +44,15 @@ func Part1(fileName string) int64 {
 	return closest
 }
 
-// |x1 - x2| + |y1 - y2|
+// manhattanDistance formula: |x1 - x2| + |y1 - y2|
 // https://xlinux.nist.gov/dads/HTML/manhattanDistance.html
 func manhattanDistance(p point) int64 {
 	// The second point is always centralPort
 	return util.AbsInt64(p.x-centralPort.x) + util.AbsInt64(p.y-centralPort.y)
 }
 
+// getPath creates a set of the points the wire moves across.
+// This is the wire's path.
 func getPath(moves []move) mapset.Set {
 	path := mapset.NewSet()
 	currentX := int64(0)
@@ -74,6 +76,7 @@ func getPath(moves []move) mapset.Set {
 	return path
 }
 
+// loadMoves uses just the first two lines in the file, one for each wire.
 func loadMoves(fileName string) ([]move, []move) {
 	lines := util.MustReadLines(fileName)
 	first := lineToMoves(lines[0])
@@ -81,6 +84,8 @@ func loadMoves(fileName string) ([]move, []move) {
 	return first, second
 }
 
+// lineToMoves turns a line like "R8,U5,L5,D3"
+// into a slice of move structs.
 func lineToMoves(line string) []move {
 	moves := []move{}
 	ss := strings.Split(line, ",")
