@@ -29,7 +29,11 @@ func Part2(fileName string) (int, error) {
 	cleanMemory := loadProgram(fileName)
 	for i := 0; i < 99; i++ {
 		for j := 0; j < 99; j++ {
-			program := resetMemory(cleanMemory)
+			// We can't just assign slice to slice, i.e. `program := cleanMemory`,
+			// or we'll get two references to the same slice and overwrite our clean
+			//  memory. So we build a new slice and copy all values.
+			program := []int{}
+			program = append(program, cleanMemory...)
 			program[1] = i
 			program[2] = j
 			program = runProgram(program)
@@ -39,22 +43,6 @@ func Part2(fileName string) (int, error) {
 		}
 	}
 	return -1, errors.New("No solution found")
-}
-
-/*
- * "Each time you try a pair of inputs, make sure you first reset the computer's
- * memory to the values in the program (your puzzle input) - in other words, don't
- * reuse memory from a previous attempt."
- *
- * We can't just assign slice to slice, or we'll get two references to the same slice
- * and we'll overwrite our clean memory. So we build a new slice and copy all values.
- */
-func resetMemory(cleanMemory []int) []int {
-	m := []int{}
-	for _, i := range cleanMemory {
-		m = append(m, i)
-	}
-	return m
 }
 
 func loadProgram(fileName string) []int {

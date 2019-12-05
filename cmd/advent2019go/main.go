@@ -5,6 +5,7 @@ import (
 
 	"github.com/bfollek/advent2019go/day01"
 	"github.com/bfollek/advent2019go/day02"
+	"github.com/bfollek/advent2019go/day03"
 )
 
 func main() {
@@ -17,4 +18,6 @@ func main() {
 	} else {
 		fmt.Printf("day02.Part2: %d\n", i)
 	}
+
+	fmt.Printf("day03.Part1: %d\n", day03.Part1("../../day03/testdata/day03.dat"))
 }
