@@ -14,6 +14,8 @@ const down = 'D'
 const right = 'R'
 const left = 'L'
 
+type closestFunc func(map[point]int64, map[point]int64) int64
+
 type move struct {
 	direction byte
 	distance  int
@@ -30,11 +32,24 @@ var centralPort = point{0, 0}
 // Part1 "What is the Manhattan distance from the central port
 // to the closest intersection?"
 func Part1(fileName string) int64 {
+	return calcClosest(fileName, closestByManhattanDistance)
+}
+
+// Part2 "What is the fewest combined steps the wires
+// must take to reach an intersection?"
+func Part2(fileName string) int64 {
+	return calcClosest(fileName, closestBySteps)
+}
+
+func calcClosest(fileName string, f closestFunc) int64 {
 	wire1Moves, wire2Moves := loadMoves(fileName)
 	wire1Path := getPath(wire1Moves)
 	wire2Path := getPath(wire2Moves)
-	crossPoints := intersection(wire1Path, wire2Path)
+	return f(wire1Path, wire2Path)
+}
 
+func closestByManhattanDistance(wire1Path, wire2Path map[point]int64) int64 {
+	crossPoints := intersection(wire1Path, wire2Path)
 	closest := int64(math.MaxInt64)
 	for _, p := range crossPoints {
 		if md := manhattanDistance(p); md < closest {
@@ -44,10 +59,15 @@ func Part1(fileName string) int64 {
 	return closest
 }
 
-// Part2 "What is the fewest combined steps the wires
-// must take to reach an intersection?"
-func Part2(fileName string) int64 {
-	return 0
+func closestBySteps(wire1Path, wire2Path map[point]int64) int64 {
+	crossPoints := intersection(wire1Path, wire2Path)
+	closest := int64(math.MaxInt64)
+	for _, p := range crossPoints {
+		if steps := wire1Path[p] + wire2Path[p]; steps < closest {
+			closest = steps
+		}
+	}
+	return closest
 }
 
 // manhattanDistance formula: |x1 - x2| + |y1 - y2|
@@ -61,10 +81,12 @@ func manhattanDistance(p point) int64 {
 // This is the wire's path.
 func getPath(moves []move) map[point]int64 {
 	path := map[point]int64{}
+	steps := int64(0)
 	currentX := int64(0)
 	currentY := int64(0)
 	for _, m := range moves {
 		for ; m.distance > 0; m.distance-- {
+			steps++
 			switch m.direction {
 			case up:
 				currentY++
@@ -76,7 +98,10 @@ func getPath(moves []move) map[point]int64 {
 				currentX--
 			}
 			p := point{currentX, currentY}
-			path[p] = 1
+			// The first time we get to a point, save the number of steps it took to get here.
+			if _, ok := path[p]; !ok {
+				path[p] = steps
+			}
 		}
 	}
 	return path
@@ -110,8 +135,17 @@ func lineToMoves(line string) []move {
 
 func intersection(m1, m2 map[point]int64) []point {
 	inter := []point{}
-	for key := range m1 {
-		if _, ok := m2[key]; ok {
+	// Drive the loop off the shorter map
+	var short, long map[point]int64
+	if len(m1) < len(m2) {
+		short = m1
+		long = m2
+	} else {
+		short = m2
+		long = m1
+	}
+	for key := range short {
+		if _, ok := long[key]; ok {
 			inter = append(inter, key)
 		}
 	}

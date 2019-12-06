@@ -20,4 +20,5 @@ func main() {
 	}
 
 	fmt.Printf("day03.Part1: %d\n", day03.Part1("../../day03/testdata/day03.dat"))
+	fmt.Printf("day03.Part2: %d\n", day03.Part2("../../day03/testdata/day03.dat"))
 }
