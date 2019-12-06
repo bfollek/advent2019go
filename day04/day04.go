@@ -28,7 +28,7 @@ func isValid(password string) bool {
 	if len(password) != passwordLen {
 		return false
 	}
-	samePair := false
+	foundSeq := false
 	// These passwords are digits, so we can safely work with bytes instead of runes.
 	for i := 0; i < passwordLen; i++ {
 		j := i + 1
@@ -41,10 +41,10 @@ func isValid(password string) bool {
 		case nxt > nxtNxt:
 			return false // Decreasing pair
 		case nxt == nxtNxt:
-			samePair = true
+			foundSeq = true
 		}
 	}
-	return samePair
+	return foundSeq
 }
 
 func loadRange(fileName string) []int {
