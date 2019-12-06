@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/bfollek/advent2019go/util"
-	mapset "github.com/deckarep/golang-set"
 )
 
 const up = 'U'
@@ -21,13 +20,12 @@ type move struct {
 }
 
 type point struct {
-	x     int64
-	y     int64
-	steps int64 // Number of steps to get to this point
+	x int64
+	y int64
 }
 
 // centralPort is de facto a constant.
-var centralPort = newPoint(0, 0)
+var centralPort = point{0, 0}
 
 // Part1 "What is the Manhattan distance from the central port
 // to the closest intersection?"
@@ -35,11 +33,11 @@ func Part1(fileName string) int64 {
 	wire1Moves, wire2Moves := loadMoves(fileName)
 	wire1Path := getPath(wire1Moves)
 	wire2Path := getPath(wire2Moves)
-	crossPoints := wire1Path.Intersect(wire2Path)
+	crossPoints := intersection(wire1Path, wire2Path)
 
 	closest := int64(math.MaxInt64)
-	for _, p := range crossPoints.ToSlice() {
-		if md := manhattanDistance(p.(point)); md < closest {
+	for _, p := range crossPoints {
+		if md := manhattanDistance(p); md < closest {
 			closest = md
 		}
 	}
@@ -52,10 +50,6 @@ func Part2(fileName string) int64 {
 	return 0
 }
 
-func newPoint(x, y int64) point {
-	return point{x: x, y: y, steps: 1}
-}
-
 // manhattanDistance formula: |x1 - x2| + |y1 - y2|
 // https://xlinux.nist.gov/dads/HTML/manhattanDistance.html
 func manhattanDistance(p point) int64 {
@@ -65,8 +59,8 @@ func manhattanDistance(p point) int64 {
 
 // getPath creates a set of the points the wire moves across.
 // This is the wire's path.
-func getPath(moves []move) mapset.Set {
-	path := mapset.NewSet()
+func getPath(moves []move) map[point]int64 {
+	path := map[point]int64{}
 	currentX := int64(0)
 	currentY := int64(0)
 	for _, m := range moves {
@@ -81,8 +75,8 @@ func getPath(moves []move) mapset.Set {
 			case left:
 				currentX--
 			}
-			p := newPoint(currentX, currentY)
-			path.Add(p)
+			p := point{currentX, currentY}
+			path[p] = 1
 		}
 	}
 	return path
@@ -112,4 +106,14 @@ func lineToMoves(line string) []move {
 		moves = append(moves, m)
 	}
 	return moves
+}
+
+func intersection(m1, m2 map[point]int64) []point {
+	inter := []point{}
+	for key := range m1 {
+		if _, ok := m2[key]; ok {
+			inter = append(inter, key)
+		}
+	}
+	return inter
 }
