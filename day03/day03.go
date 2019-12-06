@@ -21,12 +21,13 @@ type move struct {
 }
 
 type point struct {
-	x int64
-	y int64
+	x     int64
+	y     int64
+	steps int64 // Number of steps to get to this point
 }
 
 // centralPort is de facto a constant.
-var centralPort = point{0, 0}
+var centralPort = newPoint(0, 0)
 
 // Part1 "What is the Manhattan distance from the central port
 // to the closest intersection?"
@@ -43,6 +44,16 @@ func Part1(fileName string) int64 {
 		}
 	}
 	return closest
+}
+
+// Part2 "What is the fewest combined steps the wires
+// must take to reach an intersection?"
+func Part2(fileName string) int64 {
+	return 0
+}
+
+func newPoint(x, y int64) point {
+	return point{x: x, y: y, steps: 1}
 }
 
 // manhattanDistance formula: |x1 - x2| + |y1 - y2|
@@ -70,7 +81,7 @@ func getPath(moves []move) mapset.Set {
 			case left:
 				currentX--
 			}
-			p := point{currentX, currentY}
+			p := newPoint(currentX, currentY)
 			path.Add(p)
 		}
 	}
