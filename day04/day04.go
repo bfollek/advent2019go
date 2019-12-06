@@ -24,6 +24,22 @@ func Part1(fileName string) int {
 	return numValid
 }
 
+// Part2 "How many different passwords within the range
+// given in your puzzle input meet all of the criteria?"
+func Part2(fileName string) int {
+	numValid := 0
+	rng := loadRange(fileName)
+	start := rng[0]
+	end := rng[1]
+	for i := start; i <= end; i++ {
+		s := strconv.Itoa(i)
+		if isValidWithSeqOf2(s) {
+			numValid++
+		}
+	}
+	return numValid
+}
+
 func isValid(password string) bool {
 	if len(password) != passwordLen {
 		return false
@@ -45,6 +61,26 @@ func isValid(password string) bool {
 		}
 	}
 	return foundSeq
+}
+
+func isValidWithSeqOf2(password string) bool {
+	if !isValid(password) {
+		return false
+	}
+	buf := []byte{password[0]}
+	for i := 1; i < passwordLen; i++ {
+		nxt := password[i]
+		lb := len(buf)
+		if nxt != buf[lb-1] { // Sequence ended
+			if lb == 2 {
+				return true // Found sequence of 2
+			}
+			buf = []byte{nxt} // Start new sequence
+		} else {
+			buf = append(buf, nxt) // Add to current sequence
+		}
+	}
+	return len(buf) == 2 // Catch case where last 2 chars are a seq
 }
 
 func loadRange(fileName string) []int {
