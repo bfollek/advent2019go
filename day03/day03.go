@@ -1,9 +1,7 @@
 package day03
 
 import (
-	"log"
 	"math"
-	"strconv"
 	"strings"
 
 	"github.com/bfollek/advent2019go/util"
@@ -113,10 +111,7 @@ func lineToMoves(line string) []move {
 	for _, s := range ss {
 		m := move{}
 		m.direction = s[0]
-		d, err := strconv.Atoi(s[1:])
-		if err != nil {
-			log.Fatal(err)
-		}
+		d := util.MustAtoi(s[1:])
 		m.distance = d
 		moves = append(moves, m)
 	}
