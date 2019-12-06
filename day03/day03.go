@@ -66,8 +66,9 @@ func closestBySteps(p point, wire1Path, wire2Path map[point]int64) int64 {
 	return wire1Path[p] + wire2Path[p]
 }
 
-// getPath creates a set of the points the wire moves across.
-// This is the wire's path.
+// getPath creates a map of the wire's path.
+// Each key is a  point the wire moves to.
+// Each value is the number of steps the wire takes to get there.
 func getPath(moves []move) map[point]int64 {
 	path := map[point]int64{}
 	steps := int64(0)
