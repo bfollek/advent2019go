@@ -46,35 +46,24 @@ func isValid(password string, mustHaveSeq2 bool) bool {
 	if len(password) != passwordLen {
 		return false
 	}
-	seq := new(sequence)
+	seq := new(Sequence)
 	for i := 0; i < passwordLen; i++ {
 		current := password[i]
 		if j := i + 1; j < passwordLen && current > password[j] {
 			return false // Decreasing digits are invalid
 		}
-		if lSeq := len(seq.digits); lSeq > 0 && current == seq.digits[lSeq-1] {
-			seq.add(current)
+		if seq.Len() > 0 && current == seq.digits[seq.Len()-1] {
+			seq.Add(current)
 			continue
 		}
-		sequenceEnded(seq)
+		seq.Ended()
 		seq.digits = []byte{current} // Start a new sequence
 	}
-	sequenceEnded(seq) // Last digit ends a sequence
+	seq.Ended() // Last digit ends a sequence
 	if mustHaveSeq2 {
-		return seq.found2
+		return seq.Found2
 	}
-	return seq.found
-}
-
-func sequenceEnded(seq *sequence) { //seq []byte, pFoundSeq *bool, pFoundSeq2 *bool) {
-	lSeq := len(seq.digits)
-	switch {
-	case lSeq == 2:
-		seq.found2 = true
-		seq.found = true
-	case lSeq > 1:
-		seq.found = true
-	}
+	return seq.Found
 }
 
 func loadRange(fileName string) []int {
