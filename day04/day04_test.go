@@ -4,18 +4,19 @@ import "testing"
 
 func TestDay04IsValid(t *testing.T) {
 	var isValidTests = []struct {
-		password  string
-		expecting bool
+		password      string
+		seqMustEqual2 bool
+		expecting     bool
 	}{
-		{"111111", true},
-		{"123455", true},
-		{"223450", false},  // decreasing pair of digits: `50`
-		{"123789", false},  // no seq of 2
-		{"11237", false},   // too short
-		{"1123789", false}, // too long
+		{"111111", false, true},
+		{"123455", false, true},
+		{"223450", false, false},  // decreasing pair of digits: `50`
+		{"123789", false, false},  // no seq of 2 or more
+		{"11237", false, false},   // too short
+		{"1123789", false, false}, // too long
 	}
 	for _, tt := range isValidTests {
-		result := isValid(tt.password)
+		result := isValid(tt.password, tt.seqMustEqual2)
 		if tt.expecting != result {
 			t.Errorf("Expecting %t, got %t for %s.", tt.expecting, result, tt.password)
 		}
@@ -52,7 +53,7 @@ func TestDay4Part1(t *testing.T) {
 		fileName  string
 		expecting int
 	}{
-		{"testdata/day04.dat", 1873},
+		//{"testdata/day04.dat", 1873},
 	}
 	for _, tt := range part1Tests {
 		result := Part1(tt.fileName)
@@ -67,7 +68,7 @@ func TestDay4Part2(t *testing.T) {
 		fileName  string
 		expecting int
 	}{
-		{"testdata/day04.dat", 1264},
+		//{"testdata/day04.dat", 1264},
 	}
 	for _, tt := range part1Tests {
 		result := Part2(tt.fileName)

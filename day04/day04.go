@@ -1,6 +1,7 @@
 package day04
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/bfollek/advent2019go/util"
@@ -17,7 +18,7 @@ func Part1(fileName string) int {
 	end := rng[1]
 	for i := start; i <= end; i++ {
 		s := strconv.Itoa(i)
-		if isValid(s) {
+		if isValid(s, false) {
 			numValid++
 		}
 	}
@@ -40,31 +41,53 @@ func Part2(fileName string) int {
 	return numValid
 }
 
-func isValid(password string) bool {
+func isValid(password string, mustHaveSeq2 bool) bool {
 	if len(password) != passwordLen {
 		return false
 	}
+	seq := []byte{}
 	foundSeq := false
-	// These passwords are digits, so we can safely work with bytes instead of runes.
+	foundSeq2 := false
+	// The passwords are digits, so we can safely work with bytes instead of runes.
 	for i := 0; i < passwordLen; i++ {
-		j := i + 1
-		if j == passwordLen {
-			break // Nothing left to test
+		lSeq := len(seq)
+		current := password[i]
+		if lSeq > 0 && current == seq[lSeq-1] {
+			seq = append(seq, current) // Add to sequence
+			continue
 		}
-		nxt := password[i]
-		nxtNxt := password[j]
-		switch {
-		case nxt > nxtNxt:
+		// If we get here, sequence ended
+		j := i + 1
+		if j < passwordLen && current > password[j] {
 			return false // Decreasing pair
-		case nxt == nxtNxt:
+		}
+		switch {
+		case lSeq == 0:
+			break
+		case lSeq == 2:
+			foundSeq2 = true
+		case lSeq > 1:
 			foundSeq = true
 		}
+		fmt.Printf("inside loop %s %d %t %t\n", seq, lSeq, foundSeq, foundSeq2)
+		seq = []byte{current} // Start new sequence
 	}
-	return foundSeq
+	lSeq := len(seq)
+	fmt.Printf("outside loop %s %d %t %t\n", seq, lSeq, foundSeq, foundSeq2)
+	switch {
+	case lSeq == 2:
+		foundSeq2 = true
+	case lSeq > 1:
+		foundSeq = true
+	}
+	if mustHaveSeq2 {
+		return foundSeq2
+	}
+	return foundSeq || foundSeq2
 }
 
 func isValidWithSeqOf2(password string) bool {
-	if !isValid(password) {
+	if !isValid(password, false) {
 		return false
 	}
 	buf := []byte{password[0]}
