@@ -3,16 +3,11 @@ package day04
 import (
 	"strconv"
 
+	"github.com/bfollek/advent2019go/sequence"
 	"github.com/bfollek/advent2019go/util"
 )
 
 const passwordLen = 6
-
-// type seqState struct {
-// 	seqDigits []byte // Sequence of the same digit
-// 	foundSeq  bool   // Have we found a sequence of the same digit two or more times?
-// 	foundSeq2 bool   // Have we found a sequence of the same digit exactly two times?
-// }
 
 // Part1 "How many different passwords within the range
 // given in your puzzle input meet these criteria?"
@@ -46,7 +41,7 @@ func isValid(password string, mustHaveSeq2 bool) bool {
 	if len(password) != passwordLen {
 		return false
 	}
-	seq := new(Sequence)
+	seq := new(sequence.Sequence)
 	for i := 0; i < passwordLen; i++ {
 		current := password[i]
 		if j := i + 1; j < passwordLen && current > password[j] {
