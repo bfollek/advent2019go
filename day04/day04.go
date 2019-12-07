@@ -52,12 +52,12 @@ func isValid(password string, mustHaveSeq2 bool) bool {
 		if j := i + 1; j < passwordLen && current > password[j] {
 			return false // Decreasing digits are invalid
 		}
-		if seq.Len() > 0 && current == seq.digits[seq.Len()-1] {
+		if current == seq.Last() {
 			seq.Add(current)
 			continue
 		}
 		seq.Ended()
-		seq.digits = []byte{current} // Start a new sequence
+		seq.Reset(current)
 	}
 	seq.Ended() // Last digit ends a sequence
 	if mustHaveSeq2 {
