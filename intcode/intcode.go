@@ -64,27 +64,35 @@ var opCodeNumParams = map[int]int{add: 3, multiply: 3, input: 1, output: 1, halt
 // The `program` param is also the initial state of machine memory.
 // The program may modify memory as it runs. This means that the program may be
 // self-modifying.
-func Run(program []int, input []int) ([]int, []int) {
-	output := []int{}
+func Run(program []int, input []int) (memory []int, output []int) {
+	memory, output = load(program)
 	var opCode int
 	instructionPointer := 0
 	for {
-		switch opCode = program[instructionPointer]; opCode {
+		switch opCode = memory[instructionPointer]; opCode {
 		case add, multiply:
-			op1 := program[program[instructionPointer+1]]
-			op2 := program[program[instructionPointer+2]]
+			op1 := memory[memory[instructionPointer+1]]
+			op2 := memory[memory[instructionPointer+2]]
 			var value int
 			if opCode == add {
 				value = op1 + op2
 			} else {
 				value = op1 * op2
 			}
-			program[program[instructionPointer+3]] = value
+			memory[memory[instructionPointer+3]] = value
 		case halt:
-			return program, output
+			return
 		default:
 			log.Fatalf("Unexpected op code: %d", opCode)
 		}
 		instructionPointer += (opCodeNumParams[opCode] + 1)
 	}
+}
+
+// load load the program into memory and initializes the output slice.
+func load(program []int) (memory []int, output []int) {
+	memory = make([]int, len(program))
+	copy(memory, program)
+	output = []int{}
+	return
 }
