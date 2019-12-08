@@ -2,14 +2,10 @@ package day02
 
 import (
 	"errors"
-	"log"
 
+	"github.com/bfollek/advent2019go/intcode"
 	"github.com/bfollek/advent2019go/util"
 )
-
-const add = 1
-const multiply = 2
-const halt = 99
 
 const moonLanding = 19690720
 
@@ -20,7 +16,7 @@ func Part1(fileName string) int {
 	// position 2 with the value 2.
 	program[1] = 12
 	program[2] = 2
-	program = runProgram(program)
+	program = intcode.RunProgram(program)
 	return program[0]
 }
 
@@ -34,7 +30,7 @@ func Part2(fileName string) (int, error) {
 			copy(program, cleanMemory)
 			program[1] = i
 			program[2] = j
-			program = runProgram(program)
+			program = intcode.RunProgram(program)
 			if program[0] == moonLanding {
 				return 100*i + j, nil
 			}
@@ -51,31 +47,4 @@ func loadProgram(fileName string) []int {
 		program = append(program, i)
 	}
 	return program
-}
-
-// "The three integers immediately after the opcode tell you these three positions -
-// the first two indicate the positions from which you should read the input values, // // and the third indicates the position at which the output should be stored."
-func runProgram(program []int) []int {
-	opCodeIndex := 0
-	for {
-		switch opCode := program[opCodeIndex]; opCode {
-		case add, multiply:
-			op1 := program[program[opCodeIndex+1]]
-			op2 := program[program[opCodeIndex+2]]
-			var value int
-			if opCode == add {
-				value = op1 + op2
-			} else {
-				value = op1 * op2
-			}
-			program[program[opCodeIndex+3]] = value
-		case halt:
-			return program
-		default:
-			log.Fatalf("Unexpected op code: %d", opCode)
-		}
-		// "Once you're done processing an opcode, move to the next one
-		// by stepping forward 4 positions."
-		opCodeIndex += 4
-	}
 }
