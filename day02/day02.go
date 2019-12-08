@@ -16,8 +16,8 @@ func Part1(fileName string) int {
 	// position 2 with the value 2.
 	program[1] = 12
 	program[2] = 2
-	program = intcode.RunProgram(program)
-	return program[0]
+	memory, _ := intcode.Run(program, intcode.NoInput)
+	return memory[0]
 }
 
 // Part2 "...you need to determine what pair of inputs produces the output 19690720."
@@ -30,8 +30,8 @@ func Part2(fileName string) (int, error) {
 			copy(program, cleanMemory)
 			program[1] = i
 			program[2] = j
-			program = intcode.RunProgram(program)
-			if program[0] == moonLanding {
+			memory, _ := intcode.Run(program, intcode.NoInput)
+			if memory[0] == moonLanding {
 				return 100*i + j, nil
 			}
 		}

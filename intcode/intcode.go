@@ -2,6 +2,9 @@ package intcode
 
 import "log"
 
+// NoInput is a convenience for clients.
+var NoInput = []int{}
+
 // ------------------------------------------------------------------
 // Modes
 // ------------------------------------------------------------------
@@ -53,9 +56,16 @@ const halt = 99
 // opcode => number of params
 var opCodeNumParams = map[int]int{add: 3, multiply: 3, input: 1, output: 1, halt: 0}
 
-// RunProgram executes each opcode it finds and updates memory accordingly.
-// The program is the initial state of memory.
-func RunProgram(program []int) []int {
+// Run executes an intcode program. The first param, `program`, is the program code.
+// The second param, `input`, is a slice of the input values the program needs.
+// The first return value is memory after the program runs.
+// The second return value is a slice of the output the program creates.
+//
+// The `program` param is also the initial state of machine memory.
+// The program may modify memory as it runs. This means that the program may be
+// self-modifying.
+func Run(program []int, input []int) ([]int, []int) {
+	output := []int{}
 	var opCode int
 	instructionPointer := 0
 	for {
@@ -71,7 +81,7 @@ func RunProgram(program []int) []int {
 			}
 			program[program[instructionPointer+3]] = value
 		case halt:
-			return program
+			return program, output
 		default:
 			log.Fatalf("Unexpected op code: %d", opCode)
 		}
