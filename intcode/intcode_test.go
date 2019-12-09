@@ -37,14 +37,20 @@ func TestIntcodeRun(t *testing.T) {
 			[]int{30, 1, 1, 4, 2, 5, 6, 0, 99},
 			[]int{},
 		},
+		{
+			[]int{3, 0, 4, 0, 99},
+			[]int{78},
+			[]int{78, 0, 4, 0, 99},
+			[]int{78},
+		},
 	}
 	for _, rpt := range runTests {
 		memory, output := Run(rpt.program, rpt.input)
 		if !reflect.DeepEqual(rpt.expectingMemory, memory) {
-			t.Errorf("Run: expecting [%v], got [%v]", rpt.expectingMemory, memory)
+			t.Errorf("Run memory: expecting [%v], got [%v]", rpt.expectingMemory, memory)
 		}
 		if !reflect.DeepEqual(rpt.expectingOutput, output) {
-			t.Errorf("Run: expecting [%v], got [%v]", rpt.expectingOutput, output)
+			t.Errorf("Run output: expecting [%v], got [%v]", rpt.expectingOutput, output)
 		}
 	}
 }

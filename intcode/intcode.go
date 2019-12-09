@@ -7,10 +7,10 @@ var NoInput = []int{}
 
 type computer struct {
 	memory []int
-	iP     int // Instruction pointer
-	input  []int
-	inP    int // Input pointer
-	output []int
+	iP     int   // Instruction pointer
+	input  []int // Input buffer
+	inP    int   // Input pointer
+	output []int // Output buffer
 }
 
 // ------------------------------------------------------------------
@@ -86,6 +86,10 @@ func Run(program []int, input []int) ([]int, []int) {
 			add(vm)
 		case opMultiply:
 			multiply(vm)
+		case opInput:
+			in(vm)
+		case opOutput:
+			out(vm)
 		case opHalt:
 			return vm.memory, vm.output
 		default:
@@ -103,6 +107,17 @@ func add(vm *computer) {
 func multiply(vm *computer) {
 	op1, op2 := next2Params(vm)
 	store(op1*op2, vm.memory[vm.iP+3], vm)
+}
+
+func in(vm *computer) {
+	i := vm.input[vm.inP]
+	vm.inP++
+	store(i, vm.memory[vm.iP+1], vm)
+}
+
+func out(vm *computer) {
+	i := vm.memory[vm.memory[vm.iP+1]]
+	vm.output = append(vm.output, i)
 }
 
 func next2Params(vm *computer) (int, int) {
