@@ -138,7 +138,7 @@ func fetchImmediate(address int, vm *computer) int {
 // address 100, and return it.
 func fetchPosition(address int, vm *computer) int {
 	i := vm.memory[address]
-	return vm.memory[i]
+	return fetchImmediate(i, vm)
 }
 
 func store(value int, address int, vm *computer) {
