@@ -116,16 +116,25 @@ func in(vm *computer) {
 }
 
 func out(vm *computer) {
-	i := vm.memory[vm.memory[vm.iP+1]]
+	i := fetchPosition(vm.iP+1, vm)
 	vm.output = append(vm.output, i)
 }
 
 func next2Params(vm *computer) (int, int) {
-	return vm.memory[vm.memory[vm.iP+1]], vm.memory[vm.memory[vm.iP+2]]
+	return fetchPosition(vm.iP+1, vm), fetchPosition(vm.iP+2, vm)
 }
 
-func store(value int, location int, vm *computer) {
-	vm.memory[location] = value
+func fetchImmediate(address int, vm *computer) int {
+	return vm.memory[address]
+}
+
+func fetchPosition(address int, vm *computer) int {
+	i := vm.memory[address]
+	return vm.memory[i]
+}
+
+func store(value int, address int, vm *computer) {
+	vm.memory[address] = value
 }
 
 // load creates the vm and loads the program into it.
