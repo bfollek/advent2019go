@@ -1,16 +1,25 @@
 package intcode
 
-import "log"
+import (
+	"fmt"
+	"log"
+	"strconv"
+	"strings"
+
+	"github.com/bfollek/advent2019go/util"
+	"github.com/golang-collections/collections/stack"
+)
 
 // NoInput is a convenience for clients.
 var NoInput = []int{}
 
 type computer struct {
-	memory []int
-	iP     int   // Instruction pointer
-	input  []int // Input buffer
-	inP    int   // Input pointer
-	output []int // Output buffer
+	memory         []int
+	iP             int   // Instruction pointer
+	input          []int // Input buffer
+	inP            int   // Input pointer
+	output         []int // Output buffer
+	parameterModes stack.Stack
 }
 
 // ------------------------------------------------------------------
@@ -65,6 +74,10 @@ const (
 	opHalt = 99
 )
 
+// Opcodes are two-digit numbers. A single-digit opcode has an implied leading
+// zero. This comes up when we're setting parameter modes.
+const opCodeLen = 2
+
 // opcode => number of params
 var opCodeNumParams = map[int]int{opAdd: 3, opMultiply: 3, opInput: 1,
 	opOutput: 1, opHalt: 0}
@@ -80,7 +93,7 @@ var opCodeNumParams = map[int]int{opAdd: 3, opMultiply: 3, opInput: 1,
 func Run(program []int, input []int) ([]int, []int) {
 	vm := load(program, input)
 	for {
-		opCode := vm.memory[vm.iP]
+		opCode, numParams := nextOpCode(vm)
 		switch opCode {
 		case opAdd:
 			add(vm)
@@ -95,8 +108,38 @@ func Run(program []int, input []int) ([]int, []int) {
 		default:
 			log.Fatalf("Unexpected op code: %d", opCode)
 		}
-		vm.iP += (opCodeNumParams[opCode] + 1)
+		vm.iP += (numParams + 1)
 	}
+}
+
+func nextOpCode(vm *computer) (int, int) {
+	// Add a leading zero to the opCode, if necessary.
+	s := strconv.Itoa(vm.memory[vm.iP])
+	if len(s) < opCodeLen {
+		s = "0" + s
+	}
+	// Rightmost chars are the opCode
+	opCode := util.MustAtoi(s[len(s)-opCodeLen:])
+	numParams := opCodeNumParams[opCode]
+	// Leftmost chars are the parameter modes
+	modes := s[0 : len(s)-opCodeLen]
+	setParameterModes(modes, numParams, vm)
+	return opCode, numParams
+}
+
+// Parameter modes are stored in the same value as the instruction's opcode.
+// The opcode is a two-digit number based only on the ones and tens digit
+// of the value, that is, the opcode is the rightmost two digits of the
+// first value in an instruction. Parameter modes are single digits, one per
+// parameter, read right-to-left from the opcode: the first parameter's mode
+// is in the hundreds digit, the second parameter's mode is in the thousands
+// digit, the third parameter's mode is in the ten-thousands digit, and so on.
+// Any missing modes are 0.
+func setParameterModes(modes string, numParams int, vm *computer) {
+	// Add any missing leading zeros (the default) for the parameter modes.
+	lenPrefix := numParams - len(modes)
+	modes += strings.Repeat("0", lenPrefix)
+	fmt.Println(modes)
 }
 
 func add(vm *computer) {
