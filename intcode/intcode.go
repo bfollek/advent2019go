@@ -80,37 +80,36 @@ func Run(program []int, input []int) ([]int, []int) {
 	vm := load(program, input)
 	for {
 		opCode := vm.memory[vm.iP]
-		np := opCodeNumParams[opCode]
 		switch opCode {
 		case add:
-			runAdd(np, vm)
+			runAdd(vm)
 		case multiply:
-			runMultiply(np, vm)
+			runMultiply(vm)
 		case halt:
 			return vm.memory, vm.output
 		default:
 			log.Fatalf("Unexpected op code: %d", opCode)
 		}
-		vm.iP += (np + 1)
+		vm.iP += (opCodeNumParams[opCode] + 1)
 	}
 }
 
-func runAdd(numParams int, vm *computer) {
+func runAdd(vm *computer) {
 	op1, op2 := next2Params(vm)
-	storeOffset(op1+op2, numParams, vm)
+	store(op1+op2, vm.memory[vm.iP+3], vm)
 }
 
-func runMultiply(numParams int, vm *computer) {
+func runMultiply(vm *computer) {
 	op1, op2 := next2Params(vm)
-	storeOffset(op1*op2, numParams, vm)
+	store(op1*op2, vm.memory[vm.iP+3], vm)
 }
 
 func next2Params(vm *computer) (int, int) {
 	return vm.memory[vm.memory[vm.iP+1]], vm.memory[vm.memory[vm.iP+2]]
 }
 
-func storeOffset(value int, offset int, vm *computer) {
-	vm.memory[vm.memory[vm.iP+offset]] = value
+func store(value int, location int, vm *computer) {
+	vm.memory[location] = value
 }
 
 // load creates the vm and loads the program into it.
