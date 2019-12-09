@@ -58,15 +58,16 @@ const (
 // Encountering an unknown opcode means something went wrong.
 
 const (
-	add = iota + 1
-	multiply
-	input
-	output
-	halt = 99
+	opAdd = iota + 1
+	opMultiply
+	opInput
+	opOutput
+	opHalt = 99
 )
 
 // opcode => number of params
-var opCodeNumParams = map[int]int{add: 3, multiply: 3, input: 1, output: 1, halt: 0}
+var opCodeNumParams = map[int]int{opAdd: 3, opMultiply: 3, opInput: 1,
+	opOutput: 1, opHalt: 0}
 
 // Run executes an intcode program.
 // The first param, `program`, is the program code.
@@ -81,11 +82,11 @@ func Run(program []int, input []int) ([]int, []int) {
 	for {
 		opCode := vm.memory[vm.iP]
 		switch opCode {
-		case add:
-			runAdd(vm)
-		case multiply:
-			runMultiply(vm)
-		case halt:
+		case opAdd:
+			add(vm)
+		case opMultiply:
+			multiply(vm)
+		case opHalt:
 			return vm.memory, vm.output
 		default:
 			log.Fatalf("Unexpected op code: %d", opCode)
@@ -94,12 +95,12 @@ func Run(program []int, input []int) ([]int, []int) {
 	}
 }
 
-func runAdd(vm *computer) {
+func add(vm *computer) {
 	op1, op2 := next2Params(vm)
 	store(op1+op2, vm.memory[vm.iP+3], vm)
 }
 
-func runMultiply(vm *computer) {
+func multiply(vm *computer) {
 	op1, op2 := next2Params(vm)
 	store(op1*op2, vm.memory[vm.iP+3], vm)
 }
