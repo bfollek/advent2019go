@@ -101,7 +101,7 @@ func runAdd(vm *computer) {
 
 func runMultiply(vm *computer) {
 	op1, op2 := next2Params(vm)
-	store(op1*op2, add, vm)
+	store(op1*op2, multiply, vm)
 }
 
 func next2Params(vm *computer) (int, int) {
