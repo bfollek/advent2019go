@@ -91,7 +91,7 @@ func Run(program []int, input []int) ([]int, []int) {
 		default:
 			log.Fatalf("Unexpected op code: %d", opCode)
 		}
-		vm.iP += (opCodeNumParams[opCode] + 1)
+		vm.iP += (np + 1)
 	}
 }
 
