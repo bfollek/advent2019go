@@ -162,30 +162,44 @@ func in(vm *computer) {
 }
 
 func out(vm *computer) {
-	i := fetchPosition(vm.iP+1, vm)
+	i := fetch(vm.iP+1, vm)
 	vm.output = append(vm.output, i)
 }
 
 func next2Params(vm *computer) (int, int) {
-	return fetchPosition(vm.iP+1, vm), fetchPosition(vm.iP+2, vm)
+	return fetch(vm.iP+1, vm), fetch(vm.iP+2, vm)
+}
+
+func fetch(address int, vm *computer) int {
+	var i int
+	switch mode := vm.parameterModes.Pop(); mode {
+	case immediateMode:
+		i = vm.memory[address]
+	case positionMode:
+		i = vm.memory[address]
+		i = vm.memory[i]
+	default:
+		log.Fatalf("Unexpected parameter mode: %d", mode)
+	}
+	return i
 }
 
 // fetchImmediate interprets the `address` param as the address of the
 // value to return. If the `address` param is 50, we return the value
 // stored at address 50.
-func fetchImmediate(address int, vm *computer) int {
-	return vm.memory[address]
-}
+// func fetchImmediate(address int, vm *computer) int {
+// 	return vm.memory[address]
+// }
 
 // fetchPosition adds a level of indirection. It interprets the `address`
 // param as the address of an address. The second address is the address of
 // the value to return. If the `address` param is 50, we get the value stored
 // at address 50. Suppose that value is 100. We then get the value stored at
 // address 100, and return it.
-func fetchPosition(address int, vm *computer) int {
-	i := vm.memory[address]
-	return fetchImmediate(i, vm)
-}
+// func fetchPosition(address int, vm *computer) int {
+// 	i := vm.memory[address]
+// 	return fetchImmediate(i, vm)
+// }
 
 func store(value int, address int, vm *computer) {
 	vm.memory[address] = value
