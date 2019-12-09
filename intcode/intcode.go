@@ -78,13 +78,14 @@ var opCodeNumParams = map[int]int{add: 3, multiply: 3, input: 1, output: 1, halt
 // This means that the program may be self-modifying.
 func Run(program []int, input []int) ([]int, []int) {
 	vm := load(program, input)
-	var opCode int
 	for {
-		switch opCode = vm.memory[vm.iP]; opCode {
+		opCode := vm.memory[vm.iP]
+		np := opCodeNumParams[opCode]
+		switch opCode {
 		case add:
-			runAdd(vm)
+			runAdd(np, vm)
 		case multiply:
-			runMultiply(vm)
+			runMultiply(np, vm)
 		case halt:
 			return vm.memory, vm.output
 		default:
@@ -94,23 +95,22 @@ func Run(program []int, input []int) ([]int, []int) {
 	}
 }
 
-func runAdd(vm *computer) {
+func runAdd(numParams int, vm *computer) {
 	op1, op2 := next2Params(vm)
-	store(op1+op2, add, vm)
+	storeOffset(op1+op2, numParams, vm)
 }
 
-func runMultiply(vm *computer) {
+func runMultiply(numParams int, vm *computer) {
 	op1, op2 := next2Params(vm)
-	store(op1*op2, multiply, vm)
+	storeOffset(op1*op2, numParams, vm)
 }
 
 func next2Params(vm *computer) (int, int) {
 	return vm.memory[vm.memory[vm.iP+1]], vm.memory[vm.memory[vm.iP+2]]
 }
 
-func store(value int, opCode int, vm *computer) {
-	i := opCodeNumParams[opCode]
-	vm.memory[vm.memory[vm.iP+i]] = value
+func storeOffset(value int, offset int, vm *computer) {
+	vm.memory[vm.memory[vm.iP+offset]] = value
 }
 
 // load creates the vm and loads the program into it.
