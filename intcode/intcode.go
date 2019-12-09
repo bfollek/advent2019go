@@ -124,10 +124,18 @@ func next2Params(vm *computer) (int, int) {
 	return fetchPosition(vm.iP+1, vm), fetchPosition(vm.iP+2, vm)
 }
 
+// fetchImmediate interprets the `address` param as the address of the
+// value to return. If the `address` param is 50, we return the value
+// stored at address 50.
 func fetchImmediate(address int, vm *computer) int {
 	return vm.memory[address]
 }
 
+// fetchPosition adds a level of indirection. It interprets the `address`
+// param as the address of an address. The second address is the address of
+// the value to return. If the `address` param is 50, we get the value stored
+// at address 50. Suppose that value is 100. We then get the value stored at
+// address 100, and return it.
 func fetchPosition(address int, vm *computer) int {
 	i := vm.memory[address]
 	return vm.memory[i]
