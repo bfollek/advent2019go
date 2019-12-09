@@ -5,6 +5,14 @@ import "log"
 // NoInput is a convenience for clients.
 var NoInput = []int{}
 
+type computer struct {
+	memory []int
+	iP     int // Instruction pointer
+	input  []int
+	inP    int // Input pointer
+	output []int
+}
+
 // ------------------------------------------------------------------
 // Modes
 // ------------------------------------------------------------------
@@ -56,43 +64,46 @@ const halt = 99
 // opcode => number of params
 var opCodeNumParams = map[int]int{add: 3, multiply: 3, input: 1, output: 1, halt: 0}
 
-// Run executes an intcode program. The first param, `program`, is the program code.
-// The second param, `input`, is a slice of the input values the program needs.
+// Run executes an intcode program.
+// The first param, `program`, is the program code.
+// The second param, `input`, is any input the program needs.
 // The first return value is memory after the program runs.
-// The second return value is a slice of the output the program creates.
+// The second return value is the program's output.
 //
-// The `program` param is also the initial state of machine memory.
-// The program may modify memory as it runs. This means that the program may be
-// self-modifying.
-func Run(program []int, input []int) (memory []int, output []int) {
-	memory, output = load(program)
+// The program may modify the memory it's in as it runs.
+// This means that the program may be self-modifying.
+func Run(program []int, input []int) ([]int, []int) {
+	vm := load(program, input)
 	var opCode int
-	instructionPointer := 0
 	for {
-		switch opCode = memory[instructionPointer]; opCode {
+		switch opCode = vm.memory[vm.iP]; opCode {
 		case add, multiply:
-			op1 := memory[memory[instructionPointer+1]]
-			op2 := memory[memory[instructionPointer+2]]
+			op1 := vm.memory[vm.memory[vm.iP+1]]
+			op2 := vm.memory[vm.memory[vm.iP+2]]
 			var value int
 			if opCode == add {
 				value = op1 + op2
 			} else {
 				value = op1 * op2
 			}
-			memory[memory[instructionPointer+3]] = value
+			vm.memory[vm.memory[vm.iP+3]] = value
 		case halt:
-			return
+			return vm.memory, vm.output
 		default:
 			log.Fatalf("Unexpected op code: %d", opCode)
 		}
-		instructionPointer += (opCodeNumParams[opCode] + 1)
+		vm.iP += (opCodeNumParams[opCode] + 1)
 	}
 }
 
-// load load the program into memory and initializes the output slice.
-func load(program []int) (memory []int, output []int) {
-	memory = make([]int, len(program))
-	copy(memory, program)
-	output = []int{}
-	return
+// load creates the vm and loads the program into it.
+func load(program []int, input []int) *computer {
+	vm := new(computer)
+	vm.memory = make([]int, len(program))
+	copy(vm.memory, program)
+	vm.iP = 0
+	vm.input = input
+	vm.inP = 0
+	vm.output = []int{}
+	return vm
 }
