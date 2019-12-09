@@ -26,8 +26,10 @@ type computer struct {
 // immediate mode. In immediate mode, a parameter is interpreted as a value -
 // if the parameter is 50, its value is simply 50.
 
-const positionMode = 0
-const immediateMode = 1
+const (
+	positionMode = iota
+	immediateMode
+)
 
 // ------------------------------------------------------------------
 // Opcodes
@@ -55,11 +57,13 @@ const immediateMode = 1
 
 // Encountering an unknown opcode means something went wrong.
 
-const add = 1
-const multiply = 2
-const input = 3
-const output = 4
-const halt = 99
+const (
+	add = iota + 1
+	multiply
+	input
+	output
+	halt = 99
+)
 
 // opcode => number of params
 var opCodeNumParams = map[int]int{add: 3, multiply: 3, input: 1, output: 1, halt: 0}
