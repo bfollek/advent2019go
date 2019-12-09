@@ -15,10 +15,9 @@ var NoInput = []int{}
 
 type computer struct {
 	memory         []int
-	iP             int   // Instruction pointer
-	input          []int // Input buffer
-	inP            int   // Input pointer
-	output         []int // Output buffer
+	iP             int          // Instruction pointer
+	input          *stack.Stack // Input buffer
+	output         []int        // Output buffer
 	parameterModes *stack.Stack
 }
 
@@ -158,9 +157,8 @@ func multiply(vm *computer) {
 }
 
 func in(vm *computer) {
-	i := vm.input[vm.inP]
-	vm.inP++
-	store(i, vm.memory[vm.iP+1], vm)
+	i := vm.input.Pop()
+	store(i.(int), vm.memory[vm.iP+1], vm)
 }
 
 func out(vm *computer) {
@@ -199,8 +197,10 @@ func load(program []int, input []int) *computer {
 	vm.memory = make([]int, len(program))
 	copy(vm.memory, program)
 	vm.iP = 0
-	vm.input = input
-	vm.inP = 0
+	vm.input = stack.New()
+	for _, inp := range input {
+		vm.input.Push(inp)
+	}
 	vm.output = []int{}
 	return vm
 }
