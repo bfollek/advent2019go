@@ -81,16 +81,10 @@ func Run(program []int, input []int) ([]int, []int) {
 	var opCode int
 	for {
 		switch opCode = vm.memory[vm.iP]; opCode {
-		case add, multiply:
-			op1 := vm.memory[vm.memory[vm.iP+1]]
-			op2 := vm.memory[vm.memory[vm.iP+2]]
-			var value int
-			if opCode == add {
-				value = op1 + op2
-			} else {
-				value = op1 * op2
-			}
-			vm.memory[vm.memory[vm.iP+3]] = value
+		case add:
+			runAdd(vm)
+		case multiply:
+			runMultiply(vm)
 		case halt:
 			return vm.memory, vm.output
 		default:
@@ -98,6 +92,25 @@ func Run(program []int, input []int) ([]int, []int) {
 		}
 		vm.iP += (opCodeNumParams[opCode] + 1)
 	}
+}
+
+func runAdd(vm *computer) {
+	op1, op2 := next2Params(vm)
+	store(op1+op2, add, vm)
+}
+
+func runMultiply(vm *computer) {
+	op1, op2 := next2Params(vm)
+	store(op1*op2, add, vm)
+}
+
+func next2Params(vm *computer) (int, int) {
+	return vm.memory[vm.memory[vm.iP+1]], vm.memory[vm.memory[vm.iP+2]]
+}
+
+func store(value int, opCode int, vm *computer) {
+	i := opCodeNumParams[opCode]
+	vm.memory[vm.memory[vm.iP+i]] = value
 }
 
 // load creates the vm and loads the program into it.
