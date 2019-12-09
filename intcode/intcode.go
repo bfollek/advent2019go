@@ -19,7 +19,7 @@ type computer struct {
 	input          []int // Input buffer
 	inP            int   // Input pointer
 	output         []int // Output buffer
-	parameterModes stack.Stack
+	parameterModes *stack.Stack
 }
 
 // ------------------------------------------------------------------
@@ -112,6 +112,10 @@ func Run(program []int, input []int) ([]int, []int) {
 	}
 }
 
+// Parameter modes are stored in the same value as the instruction's opcode.
+// The opcode is a two-digit number based only on the ones and tens digit
+// of the value, that is, the opcode is the rightmost two digits of the
+// first value in an instruction.
 func nextOpCode(vm *computer) (int, int) {
 	// Add a leading zero to the opCode, if necessary.
 	s := strconv.Itoa(vm.memory[vm.iP])
@@ -127,10 +131,7 @@ func nextOpCode(vm *computer) (int, int) {
 	return opCode, numParams
 }
 
-// Parameter modes are stored in the same value as the instruction's opcode.
-// The opcode is a two-digit number based only on the ones and tens digit
-// of the value, that is, the opcode is the rightmost two digits of the
-// first value in an instruction. Parameter modes are single digits, one per
+// Parameter modes are single digits, one per
 // parameter, read right-to-left from the opcode: the first parameter's mode
 // is in the hundreds digit, the second parameter's mode is in the thousands
 // digit, the third parameter's mode is in the ten-thousands digit, and so on.
@@ -139,6 +140,10 @@ func setParameterModes(modes string, numParams int, vm *computer) {
 	// Add any missing leading zeros (the default) for the parameter modes.
 	lenPrefix := numParams - len(modes)
 	modes += strings.Repeat("0", lenPrefix)
+	vm.parameterModes = stack.New()
+	for i := len(modes) - 1; i >= 0; i-- {
+		vm.parameterModes.Push(util.CharToIntValue(modes[i]))
+	}
 	fmt.Println(modes)
 }
 
