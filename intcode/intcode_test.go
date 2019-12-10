@@ -55,6 +55,22 @@ func TestIntcodeRun(t *testing.T) {
 			[]int{101, -123, 5, 5, 99, 123},
 			[]int{},
 		},
+		{
+			// Using position mode, consider whether the input is equal to 8;
+			// output 1 (if it is) or 0 (if it is not). This is the equal test.
+			[]int{3, 9, 8, 9, 10, 9, 4, 9, 99, -1, 8},
+			[]int{8},
+			[]int{3, 9, 8, 9, 10, 9, 4, 9, 99, 1, 8},
+			[]int{1},
+		},
+		{
+			// Using position mode, consider whether the input is equal to 8;
+			// output 1 (if it is) or 0 (if it is not). This is the not-equal test.
+			[]int{3, 9, 8, 9, 10, 9, 4, 9, 99, -1, 8},
+			[]int{22},
+			[]int{3, 9, 8, 9, 10, 9, 4, 9, 99, 0, 8},
+			[]int{0},
+		},
 	}
 	for _, rpt := range runTests {
 		memory, output := Run(rpt.program, rpt.input)

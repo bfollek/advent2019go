@@ -24,15 +24,6 @@ type computer struct {
 // Modes
 // ------------------------------------------------------------------
 
-// Your ship computer already understands parameter mode 0, position mode, which
-// causes the parameter to be interpreted as a position - if the parameter is 50,
-// its value is the value stored at address 50 in memory. Until now, all parameters
-//  have been in position mode.
-
-// Now, your ship computer will also need to handle parameters in mode 1,
-// immediate mode. In immediate mode, a parameter is interpreted as a value -
-// if the parameter is 50, its value is simply 50.
-
 const (
 	positionMode = iota
 	immediateMode
@@ -42,33 +33,15 @@ const (
 // Opcodes
 // ------------------------------------------------------------------
 
-// Opcode 1 adds together numbers read from two positions and stores the result
-// in a third position. The three integers immediately after the opcode tell you
-// these three positions - the first two indicate the positions from which you
-// should read the input values, and the third indicates the position at which
-// the output should be stored.
-
-// Opcode 2 works exactly like opcode 1, except it multiplies the two inputs
-// instead of adding them. Again, the three integers after the opcode indicate
-// where the inputs and outputs are, not their values.
-
-// Opcode 3 takes a single integer as input and saves it to the position given
-// by its only parameter. For example, the instruction 3,50 would take an input
-// value and store it at address 50.
-
-// Opcode 4 outputs the value of its only parameter. For example, the instruction
-// 4,50 would output the value at address 50.
-
-// Opcode 99 means that the program is finished and should immediately halt.
-// The instruction 99 contains only an opcode and has no parameters.
-
-// Encountering an unknown opcode means something went wrong.
-
 const (
 	opAdd = iota + 1
 	opMultiply
 	opInput
 	opOutput
+	opJumpIfTrue
+	opJumpIfFalse
+	opLessThan
+	opEquals
 	opHalt = 99
 )
 
@@ -78,7 +51,8 @@ const opCodeLen = 2
 
 // opcode => number of params
 var opCodeNumParams = map[int]int{opAdd: 3, opMultiply: 3, opInput: 1,
-	opOutput: 1, opHalt: 0}
+	opOutput: 1, opJumpIfTrue: 2, opJumpIfFalse: 2, opLessThan: 3, opEquals: 3,
+	opHalt: 0}
 
 // RunFromFile reads an intcode program from a file, then executes it.
 func RunFromFile(fileName string, input []int) ([]int, []int) {
@@ -105,19 +79,23 @@ func Run(program []int, input []int) ([]int, []int) {
 		opCode, numParams := nextOpCode(vm)
 		switch opCode {
 		case opAdd:
-			add(vm)
+			add(numParams, vm)
 		case opMultiply:
-			multiply(vm)
+			multiply(numParams, vm)
 		case opInput:
-			in(vm)
+			in(numParams, vm)
 		case opOutput:
-			out(vm)
+			out(numParams, vm)
+		case opEquals:
+			equals(numParams, vm)
 		case opHalt:
+			// Opcode 99 means that the program is finished and should immediately halt.
+			// The instruction 99 contains only an opcode and has no parameters.
 			return vm.memory, vm.output
 		default:
+			// Encountering an unknown opcode means something went wrong.
 			log.Fatalf("Unexpected op code: %d", opCode)
 		}
-		vm.iP += (numParams + 1)
 	}
 }
 
@@ -155,24 +133,64 @@ func setParameterModes(modes string, numParams int, vm *computer) {
 	}
 }
 
-func add(vm *computer) {
+// add (Opcode 1) - adds together numbers read from two positions and stores
+// the result in a third position. The three integers immediately after the
+// opcode tell you these three positions - the first two indicate the positions
+// from which you should read the input values, and the third indicates the
+// position at which the output should be stored.
+func add(numParams int, vm *computer) {
 	op1, op2 := next2Params(vm)
 	store(op1+op2, vm.memory[vm.iP+3], vm)
+	vm.iP += (numParams + 1)
 }
 
-func multiply(vm *computer) {
+// multiply (Opcode 2) - works exactly like opcode 1, except it multiplies
+// the two inputs instead of adding them. Again, the three integers after
+// the opcode indicate where the inputs and outputs are, not their values.
+func multiply(numParams int, vm *computer) {
 	op1, op2 := next2Params(vm)
 	store(op1*op2, vm.memory[vm.iP+3], vm)
+	vm.iP += (numParams + 1)
 }
 
-func in(vm *computer) {
+// in (Opcode 3) - takes a single integer as input and saves it to the position given
+// by its only parameter. For example, the instruction 3,50 would take an input
+// value and store it at address 50.
+func in(numParams int, vm *computer) {
 	i := vm.input.Pop()
 	store(i.(int), vm.memory[vm.iP+1], vm)
+	vm.iP += (numParams + 1)
 }
 
-func out(vm *computer) {
+// out (Opcode 4) - outputs the value of its only parameter. For example,
+// the instruction 4,50 would output the value at address 50.
+func out(numParams int, vm *computer) {
 	i := fetch(vm.iP+1, vm)
 	vm.output = append(vm.output, i)
+	vm.iP += (numParams + 1)
+}
+
+// jumpIfTrue (Opcode 5) - if the first parameter is non-zero, it sets the instruction
+// pointer to the value from the second parameter. Otherwise, it does nothing.
+
+// jumpIfFalse (Opcode 6) - if the first parameter is zero, it sets the instruction
+// pointer to the value from the second parameter. Otherwise, it does nothing.
+
+// lessThan (Opcode 7) - if the first parameter is less than the second parameter, it
+// stores 1 in the position given by the third parameter. Otherwise, it stores 0.
+
+// equals (Opcode 8) - if the first parameter is equal to the second parameter, it
+// stores 1 in the position given by the third parameter. Otherwise, it stores 0.
+func equals(numParams int, vm *computer) {
+	op1, op2 := next2Params(vm)
+	var result int
+	if op1 == op2 {
+		result = 1
+	} else {
+		result = 0
+	}
+	store(result, vm.memory[vm.iP+3], vm)
+	vm.iP += (numParams + 1)
 }
 
 func next2Params(vm *computer) (int, int) {
