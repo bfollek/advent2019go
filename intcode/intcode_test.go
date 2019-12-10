@@ -56,6 +56,22 @@ func TestIntcodeRun(t *testing.T) {
 			[]int{},
 		},
 		{
+			// Using position mode, consider whether the input is less than 8;
+			// output 1 (if it is) or 0 (if it is not). This is the less than test.
+			[]int{3, 9, 7, 9, 10, 9, 4, 9, 99, -1, 8},
+			[]int{2},
+			[]int{3, 9, 7, 9, 10, 9, 4, 9, 99, 1, 8},
+			[]int{1},
+		},
+		{
+			// Using position mode, consider whether the input is less than 8;
+			// output 1 (if it is) or 0 (if it is not). This is the not less than test.
+			[]int{3, 9, 7, 9, 10, 9, 4, 9, 99, -1, 8},
+			[]int{22},
+			[]int{3, 9, 7, 9, 10, 9, 4, 9, 99, 0, 8},
+			[]int{0},
+		},
+		{
 			// Using position mode, consider whether the input is equal to 8;
 			// output 1 (if it is) or 0 (if it is not). This is the equal test.
 			[]int{3, 9, 8, 9, 10, 9, 4, 9, 99, -1, 8},
@@ -65,7 +81,7 @@ func TestIntcodeRun(t *testing.T) {
 		},
 		{
 			// Using position mode, consider whether the input is equal to 8;
-			// output 1 (if it is) or 0 (if it is not). This is the not-equal test.
+			// output 1 (if it is) or 0 (if it is not). This is the not equal test.
 			[]int{3, 9, 8, 9, 10, 9, 4, 9, 99, -1, 8},
 			[]int{22},
 			[]int{3, 9, 8, 9, 10, 9, 4, 9, 99, 0, 8},

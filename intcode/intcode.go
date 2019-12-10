@@ -86,6 +86,8 @@ func Run(program []int, input []int) ([]int, []int) {
 			in(numParams, vm)
 		case opOutput:
 			out(numParams, vm)
+		case opLessThan:
+			lessThan(numParams, vm)
 		case opEquals:
 			equals(numParams, vm)
 		case opHalt:
@@ -178,6 +180,17 @@ func out(numParams int, vm *computer) {
 
 // lessThan (Opcode 7) - if the first parameter is less than the second parameter, it
 // stores 1 in the position given by the third parameter. Otherwise, it stores 0.
+func lessThan(numParams int, vm *computer) {
+	op1, op2 := next2Params(vm)
+	var result int
+	if op1 < op2 {
+		result = 1
+	} else {
+		result = 0
+	}
+	store(result, vm.memory[vm.iP+3], vm)
+	vm.iP += (numParams + 1)
+}
 
 // equals (Opcode 8) - if the first parameter is equal to the second parameter, it
 // stores 1 in the position given by the third parameter. Otherwise, it stores 0.
