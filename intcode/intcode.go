@@ -143,7 +143,7 @@ func setParameterModes(modes string, numParams int, vm *computer) {
 func add(numParams int, vm *computer) {
 	op1, op2 := next2Params(vm)
 	store(op1+op2, vm.memory[vm.iP+3], vm)
-	vm.iP += (numParams + 1)
+	advanceInstructionPointer(numParams+1, vm)
 }
 
 // multiply (Opcode 2) - works exactly like opcode 1, except it multiplies
@@ -152,7 +152,7 @@ func add(numParams int, vm *computer) {
 func multiply(numParams int, vm *computer) {
 	op1, op2 := next2Params(vm)
 	store(op1*op2, vm.memory[vm.iP+3], vm)
-	vm.iP += (numParams + 1)
+	advanceInstructionPointer(numParams+1, vm)
 }
 
 // in (Opcode 3) - takes a single integer as input and saves it to the position given
@@ -161,7 +161,7 @@ func multiply(numParams int, vm *computer) {
 func in(numParams int, vm *computer) {
 	i := vm.input.Pop()
 	store(i.(int), vm.memory[vm.iP+1], vm)
-	vm.iP += (numParams + 1)
+	advanceInstructionPointer(numParams+1, vm)
 }
 
 // out (Opcode 4) - outputs the value of its only parameter. For example,
@@ -169,7 +169,7 @@ func in(numParams int, vm *computer) {
 func out(numParams int, vm *computer) {
 	i := fetch(vm.iP+1, vm)
 	vm.output = append(vm.output, i)
-	vm.iP += (numParams + 1)
+	advanceInstructionPointer(numParams+1, vm)
 }
 
 // jumpIfTrue (Opcode 5) - if the first parameter is non-zero, it sets the instruction
@@ -189,7 +189,7 @@ func lessThan(numParams int, vm *computer) {
 		result = 0
 	}
 	store(result, vm.memory[vm.iP+3], vm)
-	vm.iP += (numParams + 1)
+	advanceInstructionPointer(numParams+1, vm)
 }
 
 // equals (Opcode 8) - if the first parameter is equal to the second parameter, it
@@ -203,7 +203,7 @@ func equals(numParams int, vm *computer) {
 		result = 0
 	}
 	store(result, vm.memory[vm.iP+3], vm)
-	vm.iP += (numParams + 1)
+	advanceInstructionPointer(numParams+1, vm)
 }
 
 func next2Params(vm *computer) (int, int) {
@@ -239,6 +239,10 @@ func fetch(address int, vm *computer) int {
 // "Parameters that an instruction writes to will never be in immediate mode."
 func store(value int, address int, vm *computer) {
 	vm.memory[address] = value
+}
+
+func advanceInstructionPointer(i int, vm *computer) {
+	vm.iP += i
 }
 
 // load creates the vm and loads the program into it.
