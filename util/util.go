@@ -78,9 +78,3 @@ func AbsInt64(i int64) int64 {
 	}
 	return i
 }
-
-// CharToIntValue converts an integer char to its integer value,
-// e.g. '3' => 3.
-func CharToIntValue(char byte) int {
-	return int(char - '0')
-}

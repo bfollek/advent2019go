@@ -7,9 +7,14 @@ import (
 	"github.com/bfollek/advent2019go/day02"
 	"github.com/bfollek/advent2019go/day03"
 	"github.com/bfollek/advent2019go/day04"
+	"github.com/bfollek/advent2019go/day05"
 )
 
 func main() {
+	// Anything I want to hit first in delve goes here...
+	// fmt.Printf("day05.Part1: %d\n",
+	// 	day05.Part1("../../day05/testdata/immediate_add_v2.dat"))
+
 	fmt.Printf("day01.Part1: %d\n", day01.Part1("../../day01/testdata/day01.dat"))
 	fmt.Printf("day01.Part2: %d\n", day01.Part2("../../day01/testdata/day01.dat"))
 
@@ -25,4 +30,6 @@ func main() {
 
 	fmt.Printf("day04.Part1: %d\n", day04.Part1("../../day04/testdata/day04.dat"))
 	fmt.Printf("day04.Part2: %d\n", day04.Part2("../../day04/testdata/day04.dat"))
+
+	fmt.Printf("day05.Part1: %d\n", day05.Part1("../../day05/testdata/day05.dat"))
 }

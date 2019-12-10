@@ -1,7 +1,6 @@
 package intcode
 
 import (
-	"fmt"
 	"log"
 	"strconv"
 	"strings"
@@ -124,7 +123,7 @@ func nextOpCode(vm *computer) (int, int) {
 	// Rightmost chars are the opCode
 	opCode := util.MustAtoi(s[len(s)-opCodeLen:])
 	numParams := opCodeNumParams[opCode]
-	// Leftmost chars are the parameter modes
+	// Leftmost chars are the parameter modes, if any
 	modes := s[0 : len(s)-opCodeLen]
 	setParameterModes(modes, numParams, vm)
 	return opCode, numParams
@@ -138,12 +137,11 @@ func nextOpCode(vm *computer) (int, int) {
 func setParameterModes(modes string, numParams int, vm *computer) {
 	// Add any missing leading zeros (the default) for the parameter modes.
 	lenPrefix := numParams - len(modes)
-	modes += strings.Repeat("0", lenPrefix)
+	modes = strings.Repeat("0", lenPrefix) + modes
 	vm.parameterModes = stack.New()
-	for i := len(modes) - 1; i >= 0; i-- {
-		vm.parameterModes.Push(util.CharToIntValue(modes[i]))
+	for _, r := range modes {
+		vm.parameterModes.Push(int(r - '0')) // '0' => 0, e.g.
 	}
-	fmt.Println(modes)
 }
 
 func add(vm *computer) {
@@ -196,6 +194,7 @@ func fetch(address int, vm *computer) int {
 	return i
 }
 
+// "Parameters that an instruction writes to will never be in immediate mode."
 func store(value int, address int, vm *computer) {
 	vm.memory[address] = value
 }
@@ -207,8 +206,9 @@ func load(program []int, input []int) *computer {
 	copy(vm.memory, program)
 	vm.iP = 0
 	vm.input = stack.New()
-	for _, inp := range input {
-		vm.input.Push(inp)
+	// Start at end so we can use a stack and simply pop as needed
+	for i := len(input) - 1; i >= 0; i-- {
+		vm.input.Push(input[i])
 	}
 	vm.output = []int{}
 	return vm
