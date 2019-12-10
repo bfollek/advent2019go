@@ -33,6 +33,12 @@ const (
 // Opcodes
 // ------------------------------------------------------------------
 
+type opCode struct {
+	code      int
+	numParams int
+	function  func(*computer)
+}
+
 const (
 	opAdd = iota + 1
 	opMultiply
