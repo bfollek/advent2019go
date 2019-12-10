@@ -80,6 +80,17 @@ const opCodeLen = 2
 var opCodeNumParams = map[int]int{opAdd: 3, opMultiply: 3, opInput: 1,
 	opOutput: 1, opHalt: 0}
 
+// RunFromFile reads an intcode program from a file, then executes it.
+func RunFromFile(fileName string, input []int) ([]int, []int) {
+	ss := util.MustLoadStringSlice(fileName, ",")
+	program := []int{}
+	for _, s := range ss {
+		i := util.MustAtoi(s)
+		program = append(program, i)
+	}
+	return Run(program, input)
+}
+
 // Run executes an intcode program.
 // The first param, `program`, is the program code.
 // The second param, `input`, is any input the program needs.
