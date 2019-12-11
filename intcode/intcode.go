@@ -169,19 +169,19 @@ func out(oc opCode, vm *computer) {
 // pointer to the value from the second parameter. Otherwise, it does nothing.
 func jumpIfTrue(oc opCode, vm *computer) {
 	p1, p2 := next2Params(vm)
-	if p1 != 0 {
-		setInstructionPointer(p2, vm)
-	} else {
-		advanceInstructionPointer(oc.numParams+1, vm)
-	}
+	jump(p1 != 0, p2, oc, vm)
 }
 
 // jumpIfFalse (Opcode 6) - if the first parameter is zero, it sets the instruction
 // pointer to the value from the second parameter. Otherwise, it does nothing.
 func jumpIfFalse(oc opCode, vm *computer) {
 	p1, p2 := next2Params(vm)
-	if p1 == 0 {
-		setInstructionPointer(p2, vm)
+	jump(p1 == 0, p2, oc, vm)
+}
+
+func jump(jump bool, jumpTo int, oc opCode, vm *computer) {
+	if jump {
+		setInstructionPointer(jumpTo, vm)
 	} else {
 		advanceInstructionPointer(oc.numParams+1, vm)
 	}
