@@ -191,27 +191,24 @@ func jump(jump bool, jumpTo int, oc opCode, vm *computer) {
 // stores 1 in the position given by the third parameter. Otherwise, it stores 0.
 func lessThan(oc opCode, vm *computer) {
 	op1, op2 := next2Params(vm)
-	var result int
-	if op1 < op2 {
-		result = 1
-	} else {
-		result = 0
-	}
-	store(result, vm.memory[vm.iP+3], vm)
-	advanceInstructionPointer(oc.numParams+1, vm)
+	comparison(op1 < op2, oc, vm)
 }
 
 // equals (Opcode 8) - if the first parameter is equal to the second parameter, it
 // stores 1 in the position given by the third parameter. Otherwise, it stores 0.
 func equals(oc opCode, vm *computer) {
 	op1, op2 := next2Params(vm)
-	var result int
-	if op1 == op2 {
-		result = 1
+	comparison(op1 == op2, oc, vm)
+}
+
+func comparison(satisfied bool, oc opCode, vm *computer) {
+	var i int
+	if satisfied {
+		i = 1
 	} else {
-		result = 0
+		i = 0
 	}
-	store(result, vm.memory[vm.iP+3], vm)
+	store(i, vm.memory[vm.iP+3], vm)
 	advanceInstructionPointer(oc.numParams+1, vm)
 }
 
