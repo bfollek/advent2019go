@@ -2,8 +2,6 @@ package intcode
 
 import (
 	"log"
-	"strconv"
-	"strings"
 
 	"github.com/bfollek/advent2019go/util"
 	"github.com/golang-collections/collections/stack"
@@ -112,32 +110,30 @@ func Run(program []int, input []int) ([]int, []int) {
 // of the value, that is, the opcode is the rightmost two digits of the
 // first value in an instruction.
 func nextOpCode(vm *computer) (int, int) {
-	// Add a leading zero to the opCode, if necessary.
-	s := strconv.Itoa(vm.memory[vm.iP])
-	if len(s) < opCodeLen {
-		s = "0" + s
-	}
-	// Rightmost chars are the opCode
-	opCode := util.MustAtoi(s[len(s)-opCodeLen:])
+	rawOpCode := vm.memory[vm.iP]
+	setParameterModes(rawOpCode, vm)
+	opCode := rawOpCode % 100
 	numParams := opCodeNumParams[opCode]
-	// Leftmost chars are the parameter modes, if any
-	modes := s[0 : len(s)-opCodeLen]
-	setParameterModes(modes, numParams, vm)
 	return opCode, numParams
 }
 
-// Parameter modes are single digits, one per
-// parameter, read right-to-left from the opcode: the first parameter's mode
-// is in the hundreds digit, the second parameter's mode is in the thousands
-// digit, the third parameter's mode is in the ten-thousands digit, and so on.
-// Any missing modes are 0.
-func setParameterModes(modes string, numParams int, vm *computer) {
-	// Add any missing leading zeros (the default) for the parameter modes.
-	lenPrefix := numParams - len(modes)
-	modes = strings.Repeat("0", lenPrefix) + modes
+// Parameter modes are single digits, one per parameter, read right-to-left
+// from the opcode: the first parameter's mode is in the hundreds digit,
+// the second parameter's mode is in the thousands digit, the third parameter's
+// mode is in the ten-thousands digit, and so on. Any missing modes are 0.
+func setParameterModes(remaining int, vm *computer) {
+	// No harm setting more modes than the actual number of parameters.
+	// Anything extra just won't get popped.
+	var mode int
 	vm.parameterModes = stack.New()
-	for _, r := range modes {
-		vm.parameterModes.Push(int(r - '0')) // '0' => 0, e.g.
+	for _, n := range []int{10000, 1000, 100} {
+		if remaining > n {
+			remaining -= n
+			mode = 1
+		} else {
+			mode = 0
+		}
+		vm.parameterModes.Push(mode)
 	}
 }
 
