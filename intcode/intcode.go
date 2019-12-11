@@ -168,11 +168,23 @@ func out(oc opCode, vm *computer) {
 // jumpIfTrue (Opcode 5) - if the first parameter is non-zero, it sets the instruction
 // pointer to the value from the second parameter. Otherwise, it does nothing.
 func jumpIfTrue(oc opCode, vm *computer) {
+	p1, p2 := next2Params(vm)
+	if p1 != 0 {
+		setInstructionPointer(p2, vm)
+	} else {
+		advanceInstructionPointer(oc.numParams+1, vm)
+	}
 }
 
 // jumpIfFalse (Opcode 6) - if the first parameter is zero, it sets the instruction
 // pointer to the value from the second parameter. Otherwise, it does nothing.
 func jumpIfFalse(oc opCode, vm *computer) {
+	p1, p2 := next2Params(vm)
+	if p1 == 0 {
+		setInstructionPointer(p2, vm)
+	} else {
+		advanceInstructionPointer(oc.numParams+1, vm)
+	}
 }
 
 // lessThan (Opcode 7) - if the first parameter is less than the second parameter, it
@@ -240,6 +252,10 @@ func store(value int, address int, vm *computer) {
 
 func advanceInstructionPointer(i int, vm *computer) {
 	vm.iP += i
+}
+
+func setInstructionPointer(i int, vm *computer) {
+	vm.iP = i
 }
 
 // load creates the vm and loads the program into it.
