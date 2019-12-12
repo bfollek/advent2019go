@@ -11,19 +11,28 @@ const centerOfMass = "COM"
 // Part1 "What is the total number of direct and indirect orbits in your map data?"
 func Part1(fileName string) int {
 	orbits := loadOrbits(fileName)
+	memoCache := map[string]int{}
 	total := 0
 	for k := range orbits {
-		total += countOrbits(k, orbits)
+		total += countOrbits(k, orbits, memoCache)
 	}
 	return total
 }
 
-func countOrbits(obj string, orbits map[string]string) int {
+func countOrbits(obj string, orbits map[string]string, memoCache map[string]int) int {
+	if cnt, ok := memoCache[obj]; ok {
+		//fmt.Printf("cache hit: %s %d\n", obj, cnt)
+		return cnt
+	}
+	var rv int
 	whatObjOrbits := orbits[obj]
 	if whatObjOrbits == centerOfMass {
-		return 1
+		rv = 1
+	} else {
+		rv = 1 + countOrbits(whatObjOrbits, orbits, memoCache)
 	}
-	return 1 + countOrbits(whatObjOrbits, orbits)
+	memoCache[obj] = rv
+	return rv
 }
 
 func loadOrbits(fileName string) map[string]string {

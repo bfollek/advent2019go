@@ -13,4 +13,4 @@ Advent of Code 2019 in go
 
 * Day 5 - done
 
-* Day 6 - For Part 1, I didn't need a graph. There's a simple recursive solution.
+* Day 6 - For Part 1, I didn't need a graph. I used a simple recursive solution. That led to a memoization opportunity.
