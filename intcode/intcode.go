@@ -31,10 +31,9 @@ const (
 // Opcodes
 // ------------------------------------------------------------------
 
-type opCode struct {
-	code      int
+type opCodeAttribs struct {
 	numParams int
-	exec      func(opCode, *computer)
+	exec      func(opCodeAttribs, *computer)
 }
 
 const (
@@ -49,15 +48,15 @@ const (
 	opHalt = 99
 )
 
-var opCodes = map[int]opCode{
-	opAdd:         {opAdd, 3, add},
-	opMultiply:    {opMultiply, 3, multiply},
-	opInput:       {opInput, 1, in},
-	opOutput:      {opOutput, 1, out},
-	opJumpIfTrue:  {opJumpIfTrue, 2, jumpIfTrue},
-	opJumpIfFalse: {opJumpIfFalse, 2, jumpIfFalse},
-	opLessThan:    {opLessThan, 3, lessThan},
-	opEquals:      {opEquals, 3, equals},
+var opCodes = map[int]opCodeAttribs{
+	opAdd:         {3, add},
+	opMultiply:    {3, multiply},
+	opInput:       {1, in},
+	opOutput:      {1, out},
+	opJumpIfTrue:  {2, jumpIfTrue},
+	opJumpIfFalse: {2, jumpIfFalse},
+	opLessThan:    {3, lessThan},
+	opEquals:      {3, equals},
 }
 
 // RunFromFile reads an intcode program from a file, then executes it.
@@ -133,7 +132,7 @@ func setParameterModes(remaining int, vm *computer) {
 // opcode tell you these three positions - the first two indicate the positions
 // from which you should read the input values, and the third indicates the
 // position at which the output should be stored.
-func add(oc opCode, vm *computer) {
+func add(oc opCodeAttribs, vm *computer) {
 	op1, op2 := next2Params(vm)
 	store(op1+op2, vm.memory[vm.iP+3], vm)
 	advanceInstructionPointer(oc.numParams+1, vm)
@@ -142,7 +141,7 @@ func add(oc opCode, vm *computer) {
 // multiply (Opcode 2) - works exactly like opcode 1, except it multiplies
 // the two inputs instead of adding them. Again, the three integers after
 // the opcode indicate where the inputs and outputs are, not their values.
-func multiply(oc opCode, vm *computer) {
+func multiply(oc opCodeAttribs, vm *computer) {
 	op1, op2 := next2Params(vm)
 	store(op1*op2, vm.memory[vm.iP+3], vm)
 	advanceInstructionPointer(oc.numParams+1, vm)
@@ -151,7 +150,7 @@ func multiply(oc opCode, vm *computer) {
 // in (Opcode 3) - takes a single integer as input and saves it to the position given
 // by its only parameter. For example, the instruction 3,50 would take an input
 // value and store it at address 50.
-func in(oc opCode, vm *computer) {
+func in(oc opCodeAttribs, vm *computer) {
 	i := vm.input.Pop()
 	store(i.(int), vm.memory[vm.iP+1], vm)
 	advanceInstructionPointer(oc.numParams+1, vm)
@@ -159,27 +158,27 @@ func in(oc opCode, vm *computer) {
 
 // out (Opcode 4) - outputs the value of its only parameter. For example,
 // the instruction 4,50 would output the value at address 50.
-func out(oc opCode, vm *computer) {
+func out(oc opCodeAttribs, vm *computer) {
 	i := fetch(vm.iP+1, vm)
 	vm.output = append(vm.output, i)
 	advanceInstructionPointer(oc.numParams+1, vm)
 }
 
-// jumpIfTrue (Opcode 5) - if the first parameter is non-zero, it sets the instruction
+// jumpIfTrue (opCode 5) - if the first parameter is non-zero, it sets the instruction
 // pointer to the value from the second parameter. Otherwise, it does nothing.
-func jumpIfTrue(oc opCode, vm *computer) {
+func jumpIfTrue(oc opCodeAttribs, vm *computer) {
 	p1, p2 := next2Params(vm)
 	jump(p1 != 0, p2, oc, vm)
 }
 
 // jumpIfFalse (Opcode 6) - if the first parameter is zero, it sets the instruction
 // pointer to the value from the second parameter. Otherwise, it does nothing.
-func jumpIfFalse(oc opCode, vm *computer) {
+func jumpIfFalse(oc opCodeAttribs, vm *computer) {
 	p1, p2 := next2Params(vm)
 	jump(p1 == 0, p2, oc, vm)
 }
 
-func jump(jump bool, jumpTo int, oc opCode, vm *computer) {
+func jump(jump bool, jumpTo int, oc opCodeAttribs, vm *computer) {
 	if jump {
 		setInstructionPointer(jumpTo, vm)
 	} else {
@@ -189,19 +188,19 @@ func jump(jump bool, jumpTo int, oc opCode, vm *computer) {
 
 // lessThan (Opcode 7) - if the first parameter is less than the second parameter, it
 // stores 1 in the position given by the third parameter. Otherwise, it stores 0.
-func lessThan(oc opCode, vm *computer) {
+func lessThan(oc opCodeAttribs, vm *computer) {
 	op1, op2 := next2Params(vm)
 	comparison(op1 < op2, oc, vm)
 }
 
 // equals (Opcode 8) - if the first parameter is equal to the second parameter, it
 // stores 1 in the position given by the third parameter. Otherwise, it stores 0.
-func equals(oc opCode, vm *computer) {
+func equals(oc opCodeAttribs, vm *computer) {
 	op1, op2 := next2Params(vm)
 	comparison(op1 == op2, oc, vm)
 }
 
-func comparison(satisfied bool, oc opCode, vm *computer) {
+func comparison(satisfied bool, oc opCodeAttribs, vm *computer) {
 	var i int
 	if satisfied {
 		i = 1
