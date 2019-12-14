@@ -253,7 +253,7 @@ func setInstructionPointer(i int, vm *computer) {
 func load(program []int, input []int) *computer {
 	vm := new(computer)
 	vm.memory = make([]int, len(program))
-	// Copy so that we don't overwrite the program, just in case.
+	// Copy so that we don't overwrite the program, in case we it run again.
 	copy(vm.memory, program)
 	vm.iP = 0
 	vm.input = stack.New()
