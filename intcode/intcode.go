@@ -81,30 +81,25 @@ func RunFromFile(fileName string, input []int) ([]int, []int) {
 func Run(program []int, input []int) ([]int, []int) {
 	vm := load(program, input)
 	for {
-		i := nextOpCode(vm)
+		// Parameter modes are stored in the same value as the instruction's opcode.
+		// The opcode is a two-digit number based only on the ones and tens digit
+		// of the value, that is, the opcode is the rightmost two digits of the
+		// first value in an instruction.
+		rawOpCode := vm.memory[vm.iP]
+		setParameterModes(rawOpCode, vm)
+		opCode := rawOpCode % 100
 		// Opcode 99 means that the program is finished and should immediately halt.
 		// The instruction 99 contains only an opcode and has no parameters.
-		if i == opHalt {
+		if opCode == opHalt {
 			return vm.memory, vm.output
 		}
-		oc, ok := opCodes[i]
+		oca, ok := opCodes[opCode]
 		if !ok {
 			// Encountering an unknown opcode means something went wrong.
-			log.Fatalf("Unexpected op code: %d", i)
+			log.Fatalf("Unexpected op code: %d", opCode)
 		}
-		oc.exec(oc, vm)
+		oca.exec(oca, vm)
 	}
-}
-
-// Parameter modes are stored in the same value as the instruction's opcode.
-// The opcode is a two-digit number based only on the ones and tens digit
-// of the value, that is, the opcode is the rightmost two digits of the
-// first value in an instruction.
-func nextOpCode(vm *computer) int {
-	rawOpCode := vm.memory[vm.iP]
-	setParameterModes(rawOpCode, vm)
-	opCode := rawOpCode % 100
-	return opCode
 }
 
 // Parameter modes are single digits, one per parameter, read right-to-left
@@ -132,75 +127,75 @@ func setParameterModes(remaining int, vm *computer) {
 // opcode tell you these three positions - the first two indicate the positions
 // from which you should read the input values, and the third indicates the
 // position at which the output should be stored.
-func add(oc opCodeAttribs, vm *computer) {
+func add(oca opCodeAttribs, vm *computer) {
 	op1, op2 := next2Params(vm)
 	store(op1+op2, vm.memory[vm.iP+3], vm)
-	advanceInstructionPointer(oc.numParams+1, vm)
+	advanceInstructionPointer(oca.numParams+1, vm)
 }
 
 // multiply (Opcode 2) - works exactly like opcode 1, except it multiplies
 // the two inputs instead of adding them. Again, the three integers after
 // the opcode indicate where the inputs and outputs are, not their values.
-func multiply(oc opCodeAttribs, vm *computer) {
+func multiply(oca opCodeAttribs, vm *computer) {
 	op1, op2 := next2Params(vm)
 	store(op1*op2, vm.memory[vm.iP+3], vm)
-	advanceInstructionPointer(oc.numParams+1, vm)
+	advanceInstructionPointer(oca.numParams+1, vm)
 }
 
 // in (Opcode 3) - takes a single integer as input and saves it to the position given
 // by its only parameter. For example, the instruction 3,50 would take an input
 // value and store it at address 50.
-func in(oc opCodeAttribs, vm *computer) {
+func in(oca opCodeAttribs, vm *computer) {
 	i := vm.input.Pop()
 	store(i.(int), vm.memory[vm.iP+1], vm)
-	advanceInstructionPointer(oc.numParams+1, vm)
+	advanceInstructionPointer(oca.numParams+1, vm)
 }
 
 // out (Opcode 4) - outputs the value of its only parameter. For example,
 // the instruction 4,50 would output the value at address 50.
-func out(oc opCodeAttribs, vm *computer) {
+func out(oca opCodeAttribs, vm *computer) {
 	i := fetch(vm.iP+1, vm)
 	vm.output = append(vm.output, i)
-	advanceInstructionPointer(oc.numParams+1, vm)
+	advanceInstructionPointer(oca.numParams+1, vm)
 }
 
 // jumpIfTrue (opCode 5) - if the first parameter is non-zero, it sets the instruction
 // pointer to the value from the second parameter. Otherwise, it does nothing.
-func jumpIfTrue(oc opCodeAttribs, vm *computer) {
+func jumpIfTrue(oca opCodeAttribs, vm *computer) {
 	p1, p2 := next2Params(vm)
-	jump(p1 != 0, p2, oc, vm)
+	jump(p1 != 0, p2, oca, vm)
 }
 
 // jumpIfFalse (Opcode 6) - if the first parameter is zero, it sets the instruction
 // pointer to the value from the second parameter. Otherwise, it does nothing.
-func jumpIfFalse(oc opCodeAttribs, vm *computer) {
+func jumpIfFalse(oca opCodeAttribs, vm *computer) {
 	p1, p2 := next2Params(vm)
-	jump(p1 == 0, p2, oc, vm)
+	jump(p1 == 0, p2, oca, vm)
 }
 
-func jump(jump bool, jumpTo int, oc opCodeAttribs, vm *computer) {
+func jump(jump bool, jumpTo int, oca opCodeAttribs, vm *computer) {
 	if jump {
 		setInstructionPointer(jumpTo, vm)
 	} else {
-		advanceInstructionPointer(oc.numParams+1, vm)
+		advanceInstructionPointer(oca.numParams+1, vm)
 	}
 }
 
 // lessThan (Opcode 7) - if the first parameter is less than the second parameter, it
 // stores 1 in the position given by the third parameter. Otherwise, it stores 0.
-func lessThan(oc opCodeAttribs, vm *computer) {
+func lessThan(oca opCodeAttribs, vm *computer) {
 	op1, op2 := next2Params(vm)
-	comparison(op1 < op2, oc, vm)
+	comparison(op1 < op2, oca, vm)
 }
 
 // equals (Opcode 8) - if the first parameter is equal to the second parameter, it
 // stores 1 in the position given by the third parameter. Otherwise, it stores 0.
-func equals(oc opCodeAttribs, vm *computer) {
+func equals(oca opCodeAttribs, vm *computer) {
 	op1, op2 := next2Params(vm)
-	comparison(op1 == op2, oc, vm)
+	comparison(op1 == op2, oca, vm)
 }
 
-func comparison(satisfied bool, oc opCodeAttribs, vm *computer) {
+func comparison(satisfied bool, oca opCodeAttribs, vm *computer) {
 	var i int
 	if satisfied {
 		i = 1
@@ -208,7 +203,7 @@ func comparison(satisfied bool, oc opCodeAttribs, vm *computer) {
 		i = 0
 	}
 	store(i, vm.memory[vm.iP+3], vm)
-	advanceInstructionPointer(oc.numParams+1, vm)
+	advanceInstructionPointer(oca.numParams+1, vm)
 }
 
 func next2Params(vm *computer) (int, int) {
@@ -258,6 +253,7 @@ func setInstructionPointer(i int, vm *computer) {
 func load(program []int, input []int) *computer {
 	vm := new(computer)
 	vm.memory = make([]int, len(program))
+	// Copy so that we don't overwrite the program, just in case.
 	copy(vm.memory, program)
 	vm.iP = 0
 	vm.input = stack.New()
