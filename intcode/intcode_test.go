@@ -98,9 +98,6 @@ func TestIntcodeRun(t *testing.T) {
 		},
 	}
 
-	// 3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9 (using position mode)
-	// 3,3,1105,-1,9,1101,0,0,12,4,12,99,1 (using immediate mode)
-
 	for _, rpt := range runTests {
 		memory, output := Run(rpt.program, rpt.input)
 		if !reflect.DeepEqual(rpt.expectingMemory, memory) {
