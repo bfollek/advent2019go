@@ -34,8 +34,8 @@ func fuelRequired(mass int) int {
 // treat the fuel amount you just calculated as the input mass and repeat the
 // process, continuing until a fuel requirement is zero or negative."
 func fuelRequiredMeta(mass int) int {
-	total := fuelRequired(mass)
-	for f := fuelRequired(total); f >= 1; f = fuelRequired(f) {
+	total := 0
+	for f := fuelRequired(mass); f >= 1; f = fuelRequired(f) {
 		total += f
 	}
 	return total
