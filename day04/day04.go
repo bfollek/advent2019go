@@ -3,8 +3,8 @@ package day04
 import (
 	"strconv"
 
-	"github.com/bfollek/advent2019go/sequence"
-	"github.com/bfollek/advent2019go/util"
+	"github.com/bfollek/aoc19go/sequence"
+	"github.com/bfollek/aoc19go/util"
 )
 
 const passwordLen = 6

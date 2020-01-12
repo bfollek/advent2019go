@@ -3,7 +3,7 @@ package day05
 import (
 	"fmt"
 
-	"github.com/bfollek/advent2019go/intcode"
+	"github.com/bfollek/aoc19go/intcode"
 )
 
 // Part1 "After providing 1 to the only input instruction and passing all the tests, what diagnostic code does the program produce?"

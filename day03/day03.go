@@ -4,7 +4,7 @@ import (
 	"math"
 	"strings"
 
-	"github.com/bfollek/advent2019go/util"
+	"github.com/bfollek/aoc19go/util"
 )
 
 const up = 'U'

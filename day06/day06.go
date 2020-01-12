@@ -3,7 +3,7 @@ package day06
 import (
 	"strings"
 
-	"github.com/bfollek/advent2019go/util"
+	"github.com/bfollek/aoc19go/util"
 	"github.com/yourbasic/graph"
 )
 

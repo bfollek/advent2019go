@@ -1,6 +1,6 @@
 package day01
 
-import "github.com/bfollek/advent2019go/util"
+import "github.com/bfollek/aoc19go/util"
 
 type fuelFunc func(int) int
 

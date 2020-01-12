@@ -1,4 +1,4 @@
-# advent2019go
+# aoc19go
 Advent of Code 2019 in go
 
 #### Status

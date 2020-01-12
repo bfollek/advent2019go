@@ -3,7 +3,7 @@ package intcode
 import (
 	"log"
 
-	"github.com/bfollek/advent2019go/util"
+	"github.com/bfollek/aoc19go/util"
 	"github.com/golang-collections/collections/stack"
 )
 
@@ -59,14 +59,20 @@ var opCodes = map[int]opCodeAttribs{
 	opEquals:      {3, equals},
 }
 
-// RunFromFile reads an intcode program from a file, then executes it.
-func RunFromFile(fileName string, input []int) ([]int, []int) {
+// LoadFromFile loads an intcode program from a file.
+func LoadFromFile(fileName string) []int {
 	ss := util.MustLoadStringSlice(fileName, ",")
 	program := []int{}
 	for _, s := range ss {
 		i := util.MustAtoi(s)
 		program = append(program, i)
 	}
+	return program
+}
+
+// RunFromFile reads an intcode program from a file, then executes it.
+func RunFromFile(fileName string, input []int) ([]int, []int) {
+	program := LoadFromFile(fileName)
 	return Run(program, input)
 }
 
