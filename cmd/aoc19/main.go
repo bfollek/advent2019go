@@ -9,6 +9,7 @@ import (
 	"github.com/bfollek/advent2019go/day04"
 	"github.com/bfollek/advent2019go/day05"
 	"github.com/bfollek/advent2019go/day06"
+	"github.com/bfollek/advent2019go/day07"
 )
 
 func main() {
@@ -39,4 +40,6 @@ func main() {
 	fmt.Printf("day06.Part1: %d\n", day06.Part1("../../day06/testdata/day06.dat"))
 	fmt.Printf("day06.Part2: %d\n", day06.Part2("../../day06/testdata/day06_part2_short.dat"))
 	fmt.Printf("day06.Part2: %d\n", day06.Part2("../../day06/testdata/day06.dat"))
+
+	fmt.Printf("day07.Part1: %d\n", day07.Part1("../../day07/testdata/day07.dat"))
 }

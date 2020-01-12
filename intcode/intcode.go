@@ -238,9 +238,9 @@ func fetch(address int, vm *computer) int {
 
 // "Parameters that an instruction writes to will never be in immediate mode."
 func store(value int, address int, vm *computer) {
-	// Make sure there's room
+	// Make sure there's room. If there isn't, add a chunk.
 	if address >= len(vm.memory) {
-		more := address + 1 - len(vm.memory)
+		more := address * 10
 		vm.memory = append(vm.memory, make([]int, more)...)
 	}
 	vm.memory[address] = value
