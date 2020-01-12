@@ -41,7 +41,7 @@ func MustLoadStringSlice(fileName, splitString string) []string {
 // MustAtoi converts a string to an integer and stops program execution
 // if there's an error.
 func MustAtoi(s string) int {
-	i, err := strconv.Atoi(s)
+	i, err := strconv.Atoi(strings.TrimSpace(s))
 	if err != nil {
 		log.Fatal(err)
 	}

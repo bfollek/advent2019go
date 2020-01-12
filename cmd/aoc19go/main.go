@@ -36,10 +36,11 @@ func main() {
 	fmt.Printf("day05.Part1: %d\n", day05.Part1("../../day05/testdata/day05.dat"))
 	fmt.Printf("day05.Part2: %d\n", day05.Part2("../../day05/testdata/day05.dat"))
 
-	fmt.Printf("day06.Part1: %d\n", day06.Part1("../../day06/testdata/day06_part1_short.dat"))
+	fmt.Printf("day06.Part1: %d\n", day06.Part1("../../day06/testdata/day06_example1.dat"))
 	fmt.Printf("day06.Part1: %d\n", day06.Part1("../../day06/testdata/day06.dat"))
-	fmt.Printf("day06.Part2: %d\n", day06.Part2("../../day06/testdata/day06_part2_short.dat"))
+	fmt.Printf("day06.Part2: %d\n", day06.Part2("../../day06/testdata/day06_example2.dat"))
 	fmt.Printf("day06.Part2: %d\n", day06.Part2("../../day06/testdata/day06.dat"))
 
+	fmt.Printf("day07.Part1: %d\n", day07.Part1("../../day07/testdata/day07_example1.dat"))
 	fmt.Printf("day07.Part1: %d\n", day07.Part1("../../day07/testdata/day07.dat"))
 }

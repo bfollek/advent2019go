@@ -8,7 +8,7 @@ func TestDay6Part1(t *testing.T) {
 		fileName  string
 		expecting int
 	}{
-		{"short data file", "testdata/day06_part1_short.dat", 42},
+		{"short data file", "testdata/day06_example1.dat", 42},
 		{"full data file", "testdata/day06.dat", 158090},
 	}
 	for _, tt := range part1Tests {
@@ -25,7 +25,7 @@ func TestDay6Part2(t *testing.T) {
 		fileName  string
 		expecting int64
 	}{
-		{"short data file", "testdata/day06_part2_short.dat", 4},
+		{"short data file", "testdata/day06_example2.dat", 4},
 		{"full data file", "testdata/day06.dat", 241},
 	}
 	for _, tt := range part2Tests {

@@ -1,32 +1,47 @@
 package day07
 
 import (
-	"fmt"
+	"math"
 
+	"github.com/bfollek/aoc19go/intcode"
 	"github.com/gitchander/permutation"
 )
 
 // Part1 tries every combination of phase settings on the amplifiers.
 // What is the highest signal that can be sent to the thrusters?
 func Part1(fileName string) int {
-	//program := intcode.LoadFromFile(fileName)
+	program := intcode.LoadFromFile(fileName)
+	maxSoFar := math.MinInt32
 	combos := phaseSettings([]int{0, 1, 2, 3, 4})
 	for _, combo := range combos {
-		// func Part1(fileName string) int {
-		// 	_, output := intcode.RunFromFile(fileName, []int{1})
-		// 	fmt.Printf("output == %v\n", output)
-		// 	return output[len(output)-1]
-		// }
-		fmt.Printf("%T %v\n", combo, combo)
+		opSig := outputSignal(combo, program)
+		if opSig > maxSoFar {
+			maxSoFar = opSig
+		}
 	}
-	return 0
+	return maxSoFar
 }
 
 func phaseSettings(sl []int) [][]int {
 	combos := [][]int{}
 	p := permutation.New(permutation.IntSlice(sl))
 	for p.Next() {
-		combos = append(combos, sl)
+		// If I don't make a copy, all the []int slices in combos
+		// have the same value - whatever the last combo generated is.
+		// I think this is because permutation reuses the same slice -
+		// it permutes in place.
+		tmp := make([]int, len(sl))
+		copy(tmp, sl)
+		combos = append(combos, tmp)
 	}
 	return combos
+}
+
+func outputSignal(combo []int, program []int) int {
+	opSig := 0
+	for _, phaseSetting := range combo {
+		_, output := intcode.Run(program, []int{phaseSetting, opSig})
+		opSig = output[0]
+	}
+	return opSig
 }
