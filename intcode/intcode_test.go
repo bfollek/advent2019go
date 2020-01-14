@@ -102,7 +102,8 @@ func TestIntcodeRun(t *testing.T) {
 		for _, i := range test.input {
 			vm.In <- i
 		}
-		go vm.Run(test.program) // This can be above or below the for loop
+		// This can be above or below the input for loop
+		go vm.Run(test.program)
 		for idx, i := range test.expectingOutput {
 			j := <-vm.Out
 			if i != j {

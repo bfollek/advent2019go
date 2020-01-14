@@ -22,7 +22,6 @@ func Part1(fileName string) int {
 
 // Part2 "...you need to determine what pair of inputs produces the output 19690720."
 func Part2(fileName string) (int, error) {
-	vm := intcode.New()
 	cleanMemory := intcode.LoadFromFile(fileName)
 	for i := 0; i < 99; i++ {
 		for j := 0; j < 99; j++ {
@@ -31,6 +30,7 @@ func Part2(fileName string) (int, error) {
 			copy(program, cleanMemory)
 			program[1] = i
 			program[2] = j
+			vm := intcode.New()
 			go vm.Run(program)
 			if m := <-vm.Mem; m == moonLanding {
 				return 100*i + j, nil
