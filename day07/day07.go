@@ -40,8 +40,11 @@ func phaseSettings(sl []int) [][]int {
 func outputSignal(combo []int, program []int) int {
 	opSig := 0
 	for _, phaseSetting := range combo {
-		_, output := intcode.Run(program, []int{phaseSetting, opSig})
-		opSig = output[0]
+		vm := intcode.New()
+		go vm.Run(program)
+		vm.In <- phaseSetting
+		vm.In <- opSig
+		opSig = <-vm.Out
 	}
 	return opSig
 }
