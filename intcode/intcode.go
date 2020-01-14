@@ -113,6 +113,8 @@ func (vm *VM) Run(program []int) {
 			for _, m := range vm.memory {
 				vm.Mem <- m
 			}
+			close(vm.Out)
+			close(vm.Mem)
 			return
 		}
 		oca, ok := opCodes[opCode]
