@@ -102,17 +102,17 @@ func TestIntcodeRun(t *testing.T) {
 		for _, i := range test.input {
 			vm.In <- i
 		}
-		go vm.Run(test.program)
-		for idx, i := range test.expectingMemory {
-			j := <-vm.Mem
-			if i != j {
-				t.Errorf("Run memory: expecting [%d] at index [%d], got [%d]", i, idx, j)
-			}
-		}
+		go vm.Run(test.program) // This can be above or below the for loop
 		for idx, i := range test.expectingOutput {
 			j := <-vm.Out
 			if i != j {
 				t.Errorf("Run output: expecting [%d] at index [%d], got [%d]", i, idx, j)
+			}
+		}
+		for idx, i := range test.expectingMemory {
+			j := <-vm.Mem // Won't happen till the goroutine exits
+			if i != j {
+				t.Errorf("Run memory: expecting [%d] at index [%d], got [%d]", i, idx, j)
 			}
 		}
 	}
