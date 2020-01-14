@@ -1,7 +1,6 @@
 package intcode
 
 import (
-	"reflect"
 	"testing"
 )
 
@@ -98,13 +97,23 @@ func TestIntcodeRun(t *testing.T) {
 		},
 	}
 
-	for _, rpt := range runTests {
-		memory, output := Run(rpt.program, rpt.input)
-		if !reflect.DeepEqual(rpt.expectingMemory, memory) {
-			t.Errorf("Run memory: expecting [%v], got [%v]", rpt.expectingMemory, memory)
+	for _, test := range runTests {
+		vm := New()
+		for _, i := range test.input {
+			vm.In <- i
 		}
-		if !reflect.DeepEqual(rpt.expectingOutput, output) {
-			t.Errorf("Run output: expecting [%v], got [%v]", rpt.expectingOutput, output)
+		go vm.Run(test.program)
+		for idx, i := range test.expectingMemory {
+			j := <-vm.Mem
+			if i != j {
+				t.Errorf("Run memory: expecting [%d] at index [%d], got [%d]", i, idx, j)
+			}
+		}
+		for idx, i := range test.expectingOutput {
+			j := <-vm.Out
+			if i != j {
+				t.Errorf("Run output: expecting [%d] at index [%d], got [%d]", i, idx, j)
+			}
 		}
 	}
 }
