@@ -63,13 +63,12 @@ type VM struct {
 // New returns an initialized VM.
 func New() *VM {
 	vm := new(VM)
-	vm.In = make(chan int, bufSize)
-	vm.Out = make(chan int, bufSize)
-	vm.Mem = make(chan int, bufSize)
+	initChannels(vm)
 	return vm
 }
 
 // LoadFromFile loads an intcode program from a file.
+// Some clients use this to tweak the program after it's loaded.
 func LoadFromFile(fileName string) []int {
 	ss := util.MustLoadStringSlice(fileName, ",")
 	program := []int{}
@@ -112,6 +111,7 @@ func (vm *VM) Run(program []int) {
 			for _, m := range vm.memory {
 				vm.Mem <- m
 			}
+			initChannels(vm)
 			return
 		}
 		oca, ok := opCodes[opCode]
@@ -280,4 +280,10 @@ func load(program []int, vm *VM) {
 	copy(vm.memory, program)
 	vm.iP = 0
 	vm.parameterModes = stack.New()
+}
+
+func initChannels(vm *VM) {
+	vm.In = make(chan int, bufSize)
+	vm.Out = make(chan int, bufSize)
+	vm.Mem = make(chan int, bufSize)
 }
