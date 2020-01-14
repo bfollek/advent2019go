@@ -63,7 +63,9 @@ type VM struct {
 // New returns an initialized VM.
 func New() *VM {
 	vm := new(VM)
-	initChannels(vm)
+	vm.In = make(chan int, bufSize)
+	vm.Out = make(chan int, bufSize)
+	vm.Mem = make(chan int, bufSize)
 	return vm
 }
 
@@ -279,10 +281,4 @@ func load(program []int, vm *VM) {
 	copy(vm.memory, program)
 	vm.iP = 0
 	vm.parameterModes = stack.New()
-}
-
-func initChannels(vm *VM) {
-	vm.In = make(chan int, bufSize)
-	vm.Out = make(chan int, bufSize)
-	vm.Mem = make(chan int, bufSize)
 }
