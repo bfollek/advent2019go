@@ -126,6 +126,13 @@ func (vm *VM) Run(program []int) {
 	}
 }
 
+/*
+ * Private Functions
+ *
+ * Using method syntax for consistency with the public functions
+ * complicates the initialization of the `opCodes` map.
+ */
+
 // Parameter modes are single digits, one per parameter, read right-to-left
 // from the opcode: the first parameter's mode is in the hundreds digit,
 // the second parameter's mode is in the thousands digit, the third parameter's
