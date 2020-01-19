@@ -2,6 +2,7 @@ package intcode
 
 import (
 	"log"
+	"sync"
 
 	"github.com/bfollek/aoc19go/util"
 	"github.com/golang-collections/collections/stack"
@@ -84,6 +85,12 @@ func LoadFromFile(fileName string) []int {
 // RunFromFile reads an intcode program from a file, then executes it.
 func (vm *VM) RunFromFile(fileName string) {
 	program := LoadFromFile(fileName)
+	vm.Run(program)
+}
+
+// RunInWaitGroup executes an intcode program as a member of a WaitGroup.
+func (vm *VM) RunInWaitGroup(program []int, wg *sync.WaitGroup) {
+	defer wg.Done()
 	vm.Run(program)
 }
 
