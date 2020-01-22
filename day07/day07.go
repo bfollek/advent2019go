@@ -56,7 +56,7 @@ func phaseSettings(sl []int) [][]int {
 func outputSignal(combo []int, program []int) int {
 	opSig := 0
 	for _, phaseSetting := range combo {
-		vm := ic.New()
+		vm := ic.New(ic.MakeAllChannels())
 		go vm.Run(program)
 		vm.In <- phaseSetting
 		vm.In <- opSig

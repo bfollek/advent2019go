@@ -98,7 +98,7 @@ func TestIntcodeRun(t *testing.T) {
 	}
 
 	for _, test := range runTests {
-		vm := New()
+		vm := New(MakeAllChannels())
 		for _, i := range test.input {
 			vm.In <- i
 		}

@@ -3,15 +3,15 @@ package day02
 import (
 	"errors"
 
-	"github.com/bfollek/aoc19go/intcode"
+	ic "github.com/bfollek/aoc19go/intcode"
 )
 
 const moonLanding = 19690720
 
 // Part1 "What value is left at position 0 after the program halts?"
 func Part1(fileName string) int {
-	vm := intcode.New()
-	program := intcode.LoadFromFile(fileName)
+	vm := ic.New(ic.MakeAllChannels())
+	program := ic.LoadFromFile(fileName)
 	// "...before running the program, replace position 1 with the value 12 and replace
 	// position 2 with the value 2.
 	program[1] = 12
@@ -22,7 +22,7 @@ func Part1(fileName string) int {
 
 // Part2 "...you need to determine what pair of inputs produces the output 19690720."
 func Part2(fileName string) (int, error) {
-	cleanMemory := intcode.LoadFromFile(fileName)
+	cleanMemory := ic.LoadFromFile(fileName)
 	for i := 0; i < 99; i++ {
 		for j := 0; j < 99; j++ {
 			// Slice assignments overlap and would clobber cleanMemory, so...
@@ -30,7 +30,7 @@ func Part2(fileName string) (int, error) {
 			copy(program, cleanMemory)
 			program[1] = i
 			program[2] = j
-			vm := intcode.New()
+			vm := ic.New(ic.MakeAllChannels())
 			go vm.Run(program)
 			if m := <-vm.Mem; m == moonLanding {
 				return 100*i + j, nil

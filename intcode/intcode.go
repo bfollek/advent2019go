@@ -61,24 +61,20 @@ type VM struct {
 	Mem            chan int // At end of program, return memory contents on this channel
 }
 
-// MakeChannel is a helper method that lets both clients and the intcode
-// library create a buffered channel with a standard size.
+// MakeChannel is a helper that lets clients
+// create a buffered channel with a standard size.
 func MakeChannel() chan int {
 	return make(chan int, bufSize)
 }
 
-// New returns an initialized VM.
-func New() *VM {
-	vm := new(VM)
-	vm.In = MakeChannel()
-	vm.Out = MakeChannel()
-	vm.Mem = MakeChannel()
-	return vm
+// MakeAllChannels is a helper that creates all necessary channels.
+func MakeAllChannels() (chan int, chan int, chan int) {
+	return MakeChannel(), MakeChannel(), MakeChannel()
 }
 
-// NewWithChannels initializes the VM with channels that the client provides,
-// typically via MakeChannel().
-func NewWithChannels(in, out, mem chan int) *VM {
+// New returns an initialized VM. The client sets the channels in case it
+// wants to wire multiple VM's together.
+func New(in, out, mem chan int) *VM {
 	vm := new(VM)
 	vm.In = in
 	vm.Out = out

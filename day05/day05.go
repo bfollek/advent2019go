@@ -3,12 +3,12 @@ package day05
 import (
 	"log"
 
-	"github.com/bfollek/aoc19go/intcode"
+	ic "github.com/bfollek/aoc19go/intcode"
 )
 
 // Part1 "After providing 1 to the only input instruction and passing all the tests, what diagnostic code does the program produce?"
 func Part1(fileName string) int {
-	vm := intcode.New()
+	vm := ic.New(ic.MakeAllChannels())
 	go vm.RunFromFile(fileName)
 	vm.In <- 1
 	// "For each test, it will run an output instruction indicating how far
@@ -33,7 +33,7 @@ func Part1(fileName string) int {
 
 // Part2 "This time, when the TEST diagnostic program runs its input instruction to get the ID of the system to test, provide it 5, the ID for the ship's thermal radiator controller. This diagnostic test suite only outputs one number, the diagnostic code. What is the diagnostic code for system ID 5?"
 func Part2(fileName string) int {
-	vm := intcode.New()
+	vm := ic.New(ic.MakeAllChannels())
 	go vm.RunFromFile(fileName)
 	vm.In <- 5
 	return <-vm.Out
