@@ -9,30 +9,27 @@ import (
 	"github.com/gitchander/permutation"
 )
 
+type opSigFunc func([]int, []int) int
+
 // Part1 tries every combination of phase settings on the amplifiers.
 // What is the highest signal that can be sent to the thrusters?
 func Part1(fileName string) int {
-	program := ic.LoadFromFile(fileName)
-	maxSoFar := math.MinInt32
-	combos := phaseSettings([]int{0, 1, 2, 3, 4})
-	for _, combo := range combos {
-		opSig := outputSignal(combo, program)
-		if opSig > maxSoFar {
-			maxSoFar = opSig
-		}
-	}
-	return maxSoFar
+	return calcOpSig(fileName, []int{0, 1, 2, 3, 4}, outputSignal)
 }
 
 // Part2: Try every combination of the new phase settings
 // on the amplifier feedback loop. What is the highest
 // signal that can be sent to the thrusters?
 func Part2(fileName string) int {
+	return calcOpSig(fileName, []int{5, 6, 7, 8, 9}, loopedOutputSignal)
+}
+
+func calcOpSig(fileName string, initialSettings []int, f opSigFunc) int {
 	program := intcode.LoadFromFile(fileName)
 	maxSoFar := math.MinInt32
-	combos := phaseSettings([]int{5, 6, 7, 8, 9})
+	combos := phaseSettings(initialSettings)
 	for _, combo := range combos {
-		opSig := outputSignalLoop(combo, program)
+		opSig := f(combo, program)
 		if opSig > maxSoFar {
 			maxSoFar = opSig
 		}
@@ -67,7 +64,7 @@ func outputSignal(combo []int, program []int) int {
 	return opSig
 }
 
-func outputSignalLoop(combo []int, program []int) int {
+func loopedOutputSignal(combo []int, program []int) int {
 	numVms := len(combo)
 	vms := wireUpLoop(numVms)
 	var wg sync.WaitGroup
