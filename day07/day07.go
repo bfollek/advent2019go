@@ -24,10 +24,10 @@ func Part2(fileName string) int {
 	return calcOpSig(fileName, []int{5, 6, 7, 8, 9}, loopedOutputSignal)
 }
 
-func calcOpSig(fileName string, initialSettings []int, f opSigFunc) int {
+func calcOpSig(fileName string, phases []int, f opSigFunc) int {
 	program := intcode.LoadFromFile(fileName)
 	maxSoFar := math.MinInt32
-	combos := phaseSettings(initialSettings)
+	combos := phaseSettings(phases)
 	for _, combo := range combos {
 		opSig := f(combo, program)
 		if opSig > maxSoFar {
@@ -37,16 +37,16 @@ func calcOpSig(fileName string, initialSettings []int, f opSigFunc) int {
 	return maxSoFar
 }
 
-func phaseSettings(sl []int) [][]int {
+func phaseSettings(phases []int) [][]int {
 	combos := [][]int{}
-	p := permutation.New(permutation.IntSlice(sl))
+	p := permutation.New(permutation.IntSlice(phases))
 	for p.Next() {
 		// If I don't make a copy, all the []int slices in combos
 		// have the same value - whatever the last combo generated is.
 		// I think this is because permutation reuses the same slice -
 		// it permutes in place.
-		tmp := make([]int, len(sl))
-		copy(tmp, sl)
+		tmp := make([]int, len(phases))
+		copy(tmp, phases)
 		combos = append(combos, tmp)
 	}
 	return combos
