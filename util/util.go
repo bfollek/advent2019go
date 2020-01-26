@@ -32,10 +32,23 @@ func MustLoadString(fileName string) string {
 	return s
 }
 
-// MustLoadStringSlice splits the result of MustLoadString() on `splitString`.
-func MustLoadStringSlice(fileName, splitString string) []string {
+// MustLoadStringSlice splits the result of MustLoadString() on `sep`.
+// "If sep is empty, Split splits after each UTF-8 sequence." -
+// https://golang.org/pkg/strings/#Split
+func MustLoadStringSlice(fileName, sep string) []string {
 	s := MustLoadString(fileName)
-	return strings.Split(s, splitString)
+	return strings.Split(s, sep)
+}
+
+// MustLoadIntSlice splits the result of MustLoadString() on `splitString`,
+// and converts each string digit to an int.
+func MustLoadIntSlice(fileName, sep string) []int {
+	is := []int{}
+	ss := MustLoadStringSlice(fileName, sep)
+	for _, s := range ss {
+		is = append(is, MustAtoi(s))
+	}
+	return is
 }
 
 // MustAtoi converts a string to an integer and stops program execution
