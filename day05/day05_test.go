@@ -2,7 +2,7 @@ package day05
 
 import "testing"
 
-const numTests = 100
+const numTests = 10
 
 func TestDay5Part1(t *testing.T) {
 	var part1Tests = []struct {
