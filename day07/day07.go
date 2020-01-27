@@ -67,7 +67,7 @@ func outputSignal(combo []int, program []int) int {
 func loopedOutputSignal(combo []int, program []int) int {
 	numVms := len(combo)
 	vms := wireUpLoop(numVms)
-	initVms(combo, vms)
+	initInputs(combo, vms)
 	runVms(program, vms)
 	return <-vms[numVms-1].Out
 }
@@ -88,15 +88,14 @@ func wireUpLoop(numVms int) []*ic.VM {
 	return vms
 }
 
-func initVms(combo []int, vms []*ic.VM) {
+func initInputs(combo []int, vms []*ic.VM) {
 	for i, phaseSetting := range combo {
 		vm := vms[i]
 		vm.In <- phaseSetting
-		// "To start the process, a 0 signal is sent to amplifier A's input exactly once."
-		if i == 0 {
-			vm.In <- 0
-		}
+
 	}
+	// "To start the process, a 0 signal is sent to amplifier A's input exactly once."
+	vms[0].In <- 0
 }
 
 func runVms(program []int, vms []*ic.VM) {
