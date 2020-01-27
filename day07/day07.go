@@ -75,12 +75,13 @@ func loopedOutputSignal(combo []int, program []int) int {
 			vm.In <- 0
 		}
 	}
-	var wg sync.WaitGroup
-	for _, vm := range vms {
-		wg.Add(1)
-		go vm.RunInWaitGroup(program, &wg)
-	}
-	wg.Wait()
+	// var wg sync.WaitGroup
+	// for _, vm := range vms {
+	// 	wg.Add(1)
+	// 	go vm.RunInWaitGroup(program, &wg)
+	// }
+	// wg.Wait()
+	runVms(program, vms)
 	return <-vms[numVms-1].Out
 }
 
@@ -98,4 +99,13 @@ func wireUpLoop(numVms int) []*ic.VM {
 	// The first vm gets input from the last vm's output
 	vms[0].In = vms[numVms-1].Out
 	return vms
+}
+
+func runVms(program []int, vms []*ic.VM) {
+	var wg sync.WaitGroup
+	for _, vm := range vms {
+		wg.Add(1)
+		go vm.RunInWaitGroup(program, &wg)
+	}
+	wg.Wait()
 }
