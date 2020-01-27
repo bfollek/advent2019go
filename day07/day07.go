@@ -93,6 +93,7 @@ func wireUpLoop(numVms int) []*ic.VM {
 		out = ic.MakeChannel()
 		mem = ic.MakeChannel()
 	}
+	// The first vm gets input from the last vm's output
 	vms[0].In = vms[numVms-1].Out
 	return vms
 }

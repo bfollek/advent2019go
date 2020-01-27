@@ -17,7 +17,7 @@ func Part2(fileName string) int {
 
 func calcFuel(fileName string, f fuelFunc) int {
 	sum := 0
-	masses := loadMasses(fileName)
+	masses := util.MustLoadIntSlice(fileName, "\n")
 	for _, mass := range masses {
 		sum += f(mass)
 	}
@@ -39,14 +39,4 @@ func fuelRequiredMeta(mass int) int {
 		total += f
 	}
 	return total
-}
-
-func loadMasses(fileName string) []int {
-	ss := util.MustLoadStringSlice(fileName, "\n")
-	masses := []int{}
-	for _, s := range ss {
-		i := util.MustAtoi(s)
-		masses = append(masses, i)
-	}
-	return masses
 }

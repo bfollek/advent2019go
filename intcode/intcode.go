@@ -85,13 +85,7 @@ func New(in, out, mem chan int) *VM {
 // LoadFromFile loads an intcode program from a file.
 // Some clients use this to tweak the program after it's loaded.
 func LoadFromFile(fileName string) []int {
-	ss := util.MustLoadStringSlice(fileName, ",")
-	program := []int{}
-	for _, s := range ss {
-		i := util.MustAtoi(s)
-		program = append(program, i)
-	}
-	return program
+	return util.MustLoadIntSlice(fileName, ",")
 }
 
 // RunFromFile reads an intcode program from a file, then executes it.

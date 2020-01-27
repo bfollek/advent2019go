@@ -19,15 +19,16 @@ func Part1(fileName string) int {
 	//
 	// 	Finally, the program will output a diagnostic code and immediately halt."
 	for {
-		output := <-vm.Out
-		if output == 0 {
-			continue
+		output, ok := <-vm.Out
+		if ok {
+			// The first non-zero output is either an error code or the final diagnostic.
+			if output == 0 {
+				continue
+			}
+			return output
+		} else {
+			log.Fatalf("Expected output on vm.Out, but none available")
 		}
-		// The first non-zero output should be the last output
-		if _, ok := <-vm.Out; ok {
-			log.Fatalf("Unexpected non-zero output: %d", output)
-		}
-		return output
 	}
 }
 

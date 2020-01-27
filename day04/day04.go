@@ -23,7 +23,7 @@ func Part2(fileName string) int {
 
 func countValid(fileName string, mustHaveSeq2 bool) int {
 	numValid := 0
-	rng := loadRange(fileName)
+	rng := util.MustLoadIntSlice(fileName, "-")
 	start := rng[0]
 	end := rng[1]
 	for i := start; i <= end; i++ {
@@ -59,13 +59,4 @@ func isValid(password string, mustHaveSeq2 bool) bool {
 		return seq.Found2
 	}
 	return seq.Found
-}
-
-func loadRange(fileName string) []int {
-	rng := []int{}
-	ss := util.MustLoadStringSlice(fileName, "-")
-	for _, s := range ss {
-		rng = append(rng, util.MustAtoi(s))
-	}
-	return rng
 }
