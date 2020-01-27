@@ -20,7 +20,7 @@ func TestDay7Part1(t *testing.T) {
 }
 
 func TestDay7Part2(t *testing.T) {
-	const numTests = 20
+	const numTests = 100
 	var part2Tests = []struct {
 		desc      string
 		fileName  string

@@ -67,7 +67,6 @@ func outputSignal(combo []int, program []int) int {
 func loopedOutputSignal(combo []int, program []int) int {
 	numVms := len(combo)
 	vms := wireUpLoop(numVms)
-	var wg sync.WaitGroup
 	for i, phaseSetting := range combo {
 		vm := vms[i]
 		vm.In <- phaseSetting
@@ -75,6 +74,9 @@ func loopedOutputSignal(combo []int, program []int) int {
 		if i == 0 {
 			vm.In <- 0
 		}
+	}
+	var wg sync.WaitGroup
+	for _, vm := range vms {
 		wg.Add(1)
 		go vm.RunInWaitGroup(program, &wg)
 	}
