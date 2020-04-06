@@ -17,7 +17,7 @@ func Part1(fileName string) int {
 	return calcOpSig(fileName, []int{0, 1, 2, 3, 4}, outputSignal)
 }
 
-// Part2: Try every combination of the new phase settings
+// Part2 tries every combination of the new phase settings
 // on the amplifier feedback loop. What is the highest
 // signal that can be sent to the thrusters?
 func Part2(fileName string) int {
