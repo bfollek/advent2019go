@@ -21,4 +21,6 @@ For Part 2, I used a [graph library](https://github.com/yourbasic/graph) that wa
 
 * Day 7 - (I) - done.
 
+* Day 8 - Part 1 done.
+
 I == intcode

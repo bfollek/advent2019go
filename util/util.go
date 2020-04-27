@@ -20,7 +20,9 @@ func LoadString(fileName string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return string(bytes), nil
+	s := string(bytes)
+	// Smooth over any copy/paste noise
+	return strings.TrimSpace(s), nil
 }
 
 // MustLoadString stops program execution if LoadString() returns an error.
