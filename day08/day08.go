@@ -20,8 +20,8 @@ type img []layer
 // what is the number of 1 digits multiplied by the number of 2 digits?
 func Part1(height, width int, fileName string) int {
 	img := loadImg(height, width, fileName)
-	//img.display()
-	minSoFar := width*height + 1
+	//img.display(true)
+	minSoFar := height*width + 1
 	minIndex := -1
 	for i, layer := range img {
 		if nd := numPixelsInLayer(layer, black); nd < minSoFar {
@@ -57,7 +57,7 @@ func numPixelsInLayer(layer layer, targetPixel int) int {
 	return total
 }
 
-func findFirstNonTransparent(widthPos, heightPos int, img img) int {
+func findFirstNonTransparent(heightPos, widthPos int, img img) int {
 	return white
 }
 
@@ -75,17 +75,9 @@ func newImg(numLayers, height, width int) img {
 
 func loadImg(height, width int, fileName string) img {
 	pixels := util.MustLoadIntSlice(fileName, "")
-	numLayers := len(pixels) / (width * height)
+	numLayers := len(pixels) / (height * width)
 	img := newImg(numLayers, height, width)
-	// // Allocate the 3D slice
-	// img := make(img, numLayers)
-	// for i := range img {
-	// 	img[i] = make(layer, height)
-	// 	for j := range img[i] {
-	// 		img[i][j] = make(row, width)
-	// 	}
-	// }
-	// Load the pixels into the img array
+	// Load the pixels into the 3D img slice
 	p := 0
 	for i := range img {
 		for j := range img[i] {
@@ -98,10 +90,13 @@ func loadImg(height, width int, fileName string) img {
 	return img
 }
 
-func (img img) display() {
+func (img img) display(labelLayer bool) {
 	for i := range img {
+		if labelLayer {
+			fmt.Printf("\nLayer %d", i)
+		}
 		for j := range img[i] {
-			fmt.Println("")
+			fmt.Print("\n\t")
 			for k := range img[i][j] {
 				fmt.Print(img[i][j][k])
 			}
