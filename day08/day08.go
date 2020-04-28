@@ -12,14 +12,15 @@ const (
 	transparent
 )
 
-type layer [][]int // [height][width]
+type row []int
+type layer []row
 type img []layer
 
 // Part1 - find the layer that contains the fewest 0 digits. On that layer,
 // what is the number of 1 digits multiplied by the number of 2 digits?
-func Part1(width, height int, fileName string) int {
-	img := loadImg(width, height, fileName)
-	fmt.Printf("%v\n", img)
+func Part1(height, width int, fileName string) int {
+	img := loadImg(height, width, fileName)
+	//img.display()
 	minSoFar := width*height + 1
 	minIndex := -1
 	for i, layer := range img {
@@ -33,7 +34,7 @@ func Part1(width, height int, fileName string) int {
 }
 
 // Part2 - What message is produced after decoding your image?
-func Part2(width, height int, fileName string) int {
+func Part2(height, width int, fileName string) int {
 	// img := loadImg(width, height, fileName)
 	// decoded := layer{}
 	// for i := 0; i < width; i++ {
@@ -42,30 +43,6 @@ func Part2(width, height int, fileName string) int {
 	// 	}
 	// }
 	return 99
-}
-
-func loadImg(width, height int, fileName string) img {
-	pixels := util.MustLoadIntSlice(fileName, "")
-	numLayers := len(pixels) / (width * height)
-	// Allocate the 3D slice
-	img := make(img, numLayers)
-	for i := range img {
-		img[i] = make(layer, height)
-		for j := range img[i] {
-			img[i][j] = make([]int, width)
-		}
-	}
-	// Load the pixels into it
-	p := 0
-	for i := range img {
-		for j := range img[i] {
-			for k := range img[i][j] {
-				img[i][j][k] = pixels[p]
-				p++
-			}
-		}
-	}
-	return img
 }
 
 func numPixelsInLayer(layer layer, targetPixel int) int {
@@ -82,4 +59,52 @@ func numPixelsInLayer(layer layer, targetPixel int) int {
 
 func findFirstNonTransparent(widthPos, heightPos int, img img) int {
 	return white
+}
+
+func newImg(numLayers, height, width int) img {
+	// Allocate the 3D slice
+	img := make(img, numLayers)
+	for i := range img {
+		img[i] = make(layer, height)
+		for j := range img[i] {
+			img[i][j] = make(row, width)
+		}
+	}
+	return img
+}
+
+func loadImg(height, width int, fileName string) img {
+	pixels := util.MustLoadIntSlice(fileName, "")
+	numLayers := len(pixels) / (width * height)
+	img := newImg(numLayers, height, width)
+	// // Allocate the 3D slice
+	// img := make(img, numLayers)
+	// for i := range img {
+	// 	img[i] = make(layer, height)
+	// 	for j := range img[i] {
+	// 		img[i][j] = make(row, width)
+	// 	}
+	// }
+	// Load the pixels into the img array
+	p := 0
+	for i := range img {
+		for j := range img[i] {
+			for k := range img[i][j] {
+				img[i][j][k] = pixels[p]
+				p++
+			}
+		}
+	}
+	return img
+}
+
+func (img img) display() {
+	for i := range img {
+		for j := range img[i] {
+			fmt.Println("")
+			for k := range img[i][j] {
+				fmt.Print(img[i][j][k])
+			}
+		}
+	}
 }
