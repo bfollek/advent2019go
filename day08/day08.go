@@ -1,6 +1,8 @@
 package day08
 
 import (
+	"fmt"
+
 	"github.com/bfollek/aoc19go/util"
 )
 
@@ -10,13 +12,14 @@ const (
 	transparent
 )
 
-type layer [][]int // [width][height]
+type layer [][]int // [height][width]
 type img []layer
 
 // Part1 - find the layer that contains the fewest 0 digits. On that layer,
 // what is the number of 1 digits multiplied by the number of 2 digits?
 func Part1(width, height int, fileName string) int {
 	img := loadImg(width, height, fileName)
+	fmt.Printf("%v\n", img)
 	minSoFar := width*height + 1
 	minIndex := -1
 	for i, layer := range img {
@@ -47,9 +50,9 @@ func loadImg(width, height int, fileName string) img {
 	// Allocate the 3D slice
 	img := make(img, numLayers)
 	for i := range img {
-		img[i] = make([][]int, width)
+		img[i] = make(layer, height)
 		for j := range img[i] {
-			img[i][j] = make([]int, height)
+			img[i][j] = make([]int, width)
 		}
 	}
 	// Load the pixels into it
@@ -65,7 +68,7 @@ func loadImg(width, height int, fileName string) img {
 	return img
 }
 
-func numPixelsInLayer(layer [][]int, targetPixel int) int {
+func numPixelsInLayer(layer layer, targetPixel int) int {
 	total := 0
 	for _, row := range layer {
 		for _, pixel := range row {

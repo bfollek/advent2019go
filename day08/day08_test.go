@@ -13,7 +13,7 @@ func TestDay8Part1(t *testing.T) {
 		expecting int
 	}{
 		{"short data file", 3, 2, "testdata/day08_example.dat", 1},
-		//{"full data file", 25, 6, "testdata/day08.dat", 1596},
+		{"full data file", 25, 6, "testdata/day08.dat", 1596},
 	}
 	for _, tt := range part1Tests {
 		result := Part1(tt.width, tt.height, tt.fileName)
